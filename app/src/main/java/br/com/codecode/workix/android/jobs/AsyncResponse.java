@@ -6,7 +6,9 @@
  */
 package br.com.codecode.workix.android.jobs;
 
+import android.support.annotation.NonNull;
+
 public interface AsyncResponse<T> {
 
-    void processFinish(T output);
+    void processFinish(@NonNull T output);
 }

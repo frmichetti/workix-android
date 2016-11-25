@@ -17,7 +17,6 @@ public class ConnectivityReceiver extends BroadcastReceiver {
     public static ConnectivityReceiverListener connectivityReceiverListener;
 
     public ConnectivityReceiver() {
-
         super();
     }
 
@@ -27,7 +26,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        return (activeNetwork != null) && (activeNetwork.isConnectedOrConnecting());
     }
 
     @Override

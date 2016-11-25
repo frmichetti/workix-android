@@ -1,5 +1,7 @@
 package br.com.codecode.workix.android.model.pojo;
 
+import java.io.Serializable;
+
 import br.com.codecode.workix.android.model.base.BaseCandidate;
 import br.com.codecode.workix.android.model.root.RootCandidate;
 
@@ -12,5 +14,4 @@ import br.com.codecode.workix.android.model.root.RootCandidate;
  * @see BaseCandidate
  * @since 1.0
  */
-public final class Candidate extends RootCandidate implements BaseCandidate {
-}
+public final class Candidate extends RootCandidate implements BaseCandidate, Serializable{}

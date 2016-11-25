@@ -31,9 +31,9 @@ import br.com.codecode.workix.android.model.pojo.Candidate;
 
 public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> {
 
-    public AsyncResponse delegate = null;
+    private AsyncResponse asyncResponse = null;
 
-    protected BaseCandidate candidate;
+    private BaseCandidate candidate;
 
     private ProgressDialog dialog;
 
@@ -49,9 +49,9 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
         this.context = context;
     }
 
-    public TaskLoginFirebase(Context context, AsyncResponse<BaseCandidate> delegate) {
+    public TaskLoginFirebase(Context context, AsyncResponse<BaseCandidate> asyncResponse) {
         this(context);
-        this.delegate = delegate;
+        this.asyncResponse = asyncResponse;
     }
 
 
@@ -72,7 +72,7 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
 
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
-        dialog.setMessage("Iniciando a Tarefa de Login");
+        dialog.setMessage("Starting Task Login on Firebase");
 
         dialog.show();
 
@@ -82,11 +82,15 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
     @Override
     protected BaseCandidate doInBackground(String... params) {
 
+        for(int x = 0 ; x < params.length; x++){
+            if(params[x].isEmpty()) throw new RuntimeException("Unexpected String at Param[" + x+"]");
+        }
+
         String response = "";
 
         try {
 
-            publishProgress("Enviando Objeto para o Servidor");
+            publishProgress("Send Token to Server");
 
             Token t = new Token();
 
@@ -98,16 +102,16 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
 
             publishProgress("Objeto recebido");
 
-            if ((response == null) || (response.equals(""))) {
+            if ((response.isEmpty() || (response.equals(""))|| response == null)) {
 
-                publishProgress("Servidor Respondeu Null");
+                publishProgress("Server Response is Null or Empty");
 
 
             } else if (response.equals("{}")) {
 
-                Log.d("DEBUG", "ID Existente no Firebase");
+                Log.d("DEBUG", "Existent ID on Firebase");
 
-                Log.d("DEBUG", "Candidateo Vazio");
+                Log.d("DEBUG", "Empty Object");
 
                 FirebaseAuth.getInstance().getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
 
@@ -134,24 +138,30 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
 
             } else {
 
-                publishProgress("Criando Objeto Candidate");
+                publishProgress("Creating Object");
 
                 candidate = new Gson().fromJson(response,
-                        new TypeToken<Candidate>() {
-                        }.getType());
+                        new TypeToken<BaseCandidate>(){}.getType());
             }
 
 
         } catch (IOException e) {
 
-            publishProgress("Falha ao Receber Objeto");
+            publishProgress("Fail on Receive Object");
 
             Log.e("Erro", e.getMessage());
 
-        }
-        publishProgress("Login Validado!");
+        }catch (RuntimeException e){
 
-        publishProgress("Entrando...");
+            publishProgress("Fail on Receive Object");
+
+            Log.e("Error" ,"Unexpected Response : " + e.getMessage());
+
+        }
+
+        publishProgress("Login Validated!");
+
+        publishProgress("Enter...");
 
         return (candidate != null) ? (candidate) : (new Candidate());
     }
@@ -173,7 +183,7 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
 
         dialog.dismiss();
 
-        delegate.processFinish(result);
+        asyncResponse.processFinish(result);
 
     }
 

@@ -9,21 +9,25 @@ package br.com.codecode.workix.android.jobs;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import br.com.codecode.workix.android.R;
 import br.com.codecode.workix.android.dao.HTTP;
 import br.com.codecode.workix.android.model.base.BaseUser;
+import br.com.codecode.workix.android.model.pojo.User;
 
 
 public class TaskCreateUser extends AsyncTask<BaseUser, String, BaseUser> {
 
-    public AsyncResponse delegate = null;
+    private AsyncResponse delegate = null;
 
     private String url;
 
@@ -74,7 +78,19 @@ public class TaskCreateUser extends AsyncTask<BaseUser, String, BaseUser> {
     }
 
     @Override
-    protected BaseUser doInBackground(BaseUser... params) {
+    protected BaseUser doInBackground(@NonNull BaseUser... params) {
+
+        for(int x=0; x < params.length;x++){
+
+            if(!(params[x] instanceof Serializable)){
+
+                throw new RuntimeException("Object Must implement Serializable");
+
+            }else if(!(params[x] instanceof Parcelable)){
+
+                throw new RuntimeException("Object Must implement Parcelable");
+            }
+        }
 
         try {
 
@@ -84,19 +100,18 @@ public class TaskCreateUser extends AsyncTask<BaseUser, String, BaseUser> {
 
             response = HTTP.sendRequest(url, "POST", new Gson().toJson(params[0]));
 
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
 
-            publishProgress("Falha ao Obter Resposta");
+            publishProgress("Fail on Get Response");
 
             Log.e("Erro", e.getMessage());
         }
 
-        publishProgress("Item recebido !");
+        publishProgress("Item received !");
 
         //TODO FIXME Receive a Json
 
-        BaseUser u = new Gson().fromJson(response, new TypeToken<BaseUser>() {
-        }.getType());
+        BaseUser u = new Gson().fromJson(response, new TypeToken<User>(){}.getType());
 
         return u;
 

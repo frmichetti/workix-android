@@ -6,6 +6,7 @@
  */
 package br.com.codecode.workix.android.view.activity.login;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -36,7 +36,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.io.Serializable;
@@ -45,32 +44,31 @@ import br.com.codecode.workix.android.R;
 import br.com.codecode.workix.android.jobs.AsyncResponse;
 import br.com.codecode.workix.android.jobs.TaskLoginFirebase;
 import br.com.codecode.workix.android.model.base.BaseCandidate;
-import br.com.codecode.workix.android.util.ConnectivityReceiver;
 import br.com.codecode.workix.android.view.activity.CandidateActivity;
-import br.com.codecode.workix.android.view.activity.MyPattern;
 import br.com.codecode.workix.android.view.activity.NewMain;
 
-
-public class LoginActivity extends AppCompatActivity implements MyPattern,
-        ConnectivityReceiver.ConnectivityReceiverListener {
+public class LoginActivity extends BaseActivity {
 
     private static final int RC_SIGN_IN = 9001;
-    private Context context;
-    private ActionBar actionBar;
-    private EditText editTextEmail, editTextPassword;
-    private FirebaseAuth firebaseAuth;
-    private GoogleApiClient googleApiClient;
-    private ProgressBar progressBar;
-    private Button btnSignup, btnLogin, btnReset;
-    private SignInButton signInButton;
+
     private String TAG = "Google Login";
+
+    private ActionBar actionBar;
+
+    private EditText editTextPassword;
+
+    private GoogleApiClient googleApiClient;
+
+    private ProgressBar progressBar;
+
+    private Button btnSignup, btnLogin, btnReset;
+
+    private SignInButton signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        firebaseAuth = FirebaseAuth.getInstance();
 
         setContentView(R.layout.activity_login);
 
@@ -94,7 +92,7 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
         googleApiClient = new GoogleApiClient.Builder(this)
-                // .enableAutoManage(this /* FragmentActivity */ ,1, this /* OnConnectionFailedListener */)
+              //  .enableAutoManage(context /* FragmentActivity */ ,1, context /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
@@ -112,11 +110,13 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
 
         doConfigure();
 
-        doCheckConnection();
+        doCheckConnection(context);
 
+        //TODO REMOVEME
         editTextEmail.setText("frmichetti@gmail.com");
 
-        editTextPassword.setText("s394asc9");
+        //TODO REMOVEME
+        editTextPassword.setText("123456");
     }
 
     @Override
@@ -140,13 +140,15 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
 
         signInButton = (SignInButton) findViewById(R.id.google_sign_in_button);
 
-        // Customize sign-in button. The sign-in button can be displayed in
-        // multiple sizes and color schemes. It can also be contextually
-        // rendered based on the requested scopes. For example. a red button may
-        // be displayed when Google+ scopes are requested, but a white button
-        // may be displayed when only basic profile is requested. Try adding the
-        // Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
-        // difference.
+        /*
+         Customize sign-in button. The sign-in button can be displayed in
+         multiple sizes and color schemes. It can also be contextually
+         rendered based on the requested scopes. For example. a red button may
+         be displayed when Google+ scopes are requested, but a white button
+         may be displayed when only basic profile is requested. Try adding the
+         Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
+         difference.
+         */
         signInButton.setSize(SignInButton.SIZE_WIDE);
 
     }
@@ -170,7 +172,8 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
             @Override
             public void onClick(View v) {
 
-                startActivity(new Intent(context, SignupActivity.class));
+                doChangeActivity(context,SignupActivity.class);
+
             }
         });
 
@@ -179,7 +182,9 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
             @Override
             public void onClick(View v) {
 
-                startActivity(new Intent(context, ResetPasswordActivity.class));
+                doChangeActivity(context,ResetPasswordActivity.class);
+
+
             }
         });
 
@@ -194,20 +199,20 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
 
                 if (TextUtils.isEmpty(email)) {
 
-                    Toast.makeText(context, getString(R.string.enter_email_address), Toast.LENGTH_SHORT).show();
+                    showToast(context, getString(R.string.enter_email_address), Toast.LENGTH_SHORT);
 
                     return;
                 }
 
                 if (TextUtils.isEmpty(password)) {
 
-                    Toast.makeText(context, getString(R.string.enter_password), Toast.LENGTH_SHORT).show();
+                    showToast(context, getString(R.string.enter_password), Toast.LENGTH_SHORT);
 
                     return;
                 }
 
 
-                if (doCheckConnection()) {
+                if (doCheckConnection(context)) {
 
                     progressBar.setVisibility(View.VISIBLE);
 
@@ -215,7 +220,7 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
 
                 } else {
 
-                    showSnack(doCheckConnection());
+                    showSnack(doCheckConnection(context));
 
                 }
 
@@ -226,9 +231,7 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
     }
 
     @Override
-    public void setupToolBar() {
-
-    }
+    public void setupToolBar() {}
 
     @Override
     public void doConfigure() {
@@ -243,19 +246,15 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
 
         actionBar.setDisplayHomeAsUpEnabled(false);
 
+        if(bundle != null){
+            editTextEmail.setText(bundle.getString("email"));
+        }
+
     }
 
     @Override
-    public void doChangeActivity(Context context, Class clazz) {
-
-    }
-
-    // Method to manually check connection status
-    private boolean doCheckConnection() {
-
-        boolean isConnected = ConnectivityReceiver.isConnected(context);
-
-        return isConnected;
+    public void doChangeActivity(Context context, Class<? extends Activity> clazz) {
+        startActivity(new Intent(context,clazz));
     }
 
     // Showing the status in Snackbar
@@ -292,14 +291,6 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
 
     }
 
-    @Override
-    protected void onResume() {
-
-        super.onResume();
-
-        // register connection status listener
-        this.setConnectivityListener(this);
-    }
 
     /**
      * Callback will be triggered when there is change in
@@ -309,12 +300,6 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
     public void onNetworkConnectionChanged(boolean isConnected) {
 
         showSnack(isConnected);
-    }
-
-
-    public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
-
-        ConnectivityReceiver.connectivityReceiverListener = listener;
     }
 
     @Override
@@ -336,7 +321,7 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
                 GoogleSignInAccount account = result.getSignInAccount();
 
 
-                Toast.makeText(context, "Login efetuado com sucesso", Toast.LENGTH_SHORT).show();
+                showToast(context, "Login efetuado com sucesso", Toast.LENGTH_SHORT);
 
 
                 firebaseAuthWithGoogle(account);
@@ -345,7 +330,7 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
                 // Google Sign In failed, update UI appropriately
                 // ...
 
-                Toast.makeText(context, "Não foi possível realizar login com sua conta Google", Toast.LENGTH_SHORT).show();
+                showToast(context, "Não foi possível realizar login com sua conta Google", Toast.LENGTH_SHORT);
 
             }
         }
@@ -374,7 +359,7 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
 
                             } else {
 
-                                Toast.makeText(context, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
+                                showToast(context, getString(R.string.auth_failed), Toast.LENGTH_LONG);
 
                                 Log.d("DEBUG-LOGIN", String.valueOf(R.string.auth_failed));
                             }
@@ -416,9 +401,10 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
             @Override
             public void onFailure(@NonNull Exception e) {
 
-                Toast.makeText(context, getString(R.string.could_not_authorize), Toast.LENGTH_LONG).show();
-
                 Log.e("[Error on Login]", e.getMessage());
+
+                showToast(context, getString(R.string.could_not_authorize), Toast.LENGTH_LONG);
+
             }
         });
 
@@ -435,24 +421,30 @@ public class LoginActivity extends AppCompatActivity implements MyPattern,
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
+                        //TODO Validate Logic HERE
+
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
+                        /* If sign in fails, display a message to the user. If sign in succeeds
+                         the auth state listener will be notified and logic to handle the
+                         signed in user can be handled in the listener.*/
                         if (!task.isSuccessful()) {
 
                             Log.w(TAG, "signInWithCredential", task.getException());
 
-                            Toast.makeText(context, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            showToast(context, "Authentication failed.",
+                                    Toast.LENGTH_SHORT);
                         }
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-
             @Override
             public void onFailure(@NonNull Exception e) {
+
+                Log.d(TAG, "signInWithCredential:onFailure:");
+
+                showToast(context, "Authentication failed.",
+                        Toast.LENGTH_SHORT);
 
             }
         });

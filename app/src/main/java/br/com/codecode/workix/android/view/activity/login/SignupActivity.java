@@ -14,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,7 +29,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -43,17 +41,11 @@ import br.com.codecode.workix.android.model.base.BaseUser;
 import br.com.codecode.workix.android.model.pojo.User;
 import br.com.codecode.workix.android.util.ConnectivityReceiver;
 import br.com.codecode.workix.android.view.activity.CandidateActivity;
-import br.com.codecode.workix.android.view.activity.MyPattern;
 
 
-public class SignupActivity extends AppCompatActivity implements MyPattern,
-        ConnectivityReceiver.ConnectivityReceiverListener {
-
-    private FirebaseAuth auth;
+public class SignupActivity extends BaseActivity {
 
     private ActionBar actionBar;
-
-    private Context context;
 
     private EditText editTextEmail, editTextPassword;
 
@@ -65,8 +57,6 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        auth = FirebaseAuth.getInstance();
 
         setContentView(R.layout.activity_signup);
 
@@ -92,9 +82,6 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
         super.onResume();
 
         progressBar.setVisibility(View.GONE);
-
-        // register connection status listener
-        this.setConnectivityListener(this);
 
     }
 
@@ -125,7 +112,13 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
 
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(context, ResetPasswordActivity.class));
+
+                Bundle b = new Bundle();
+
+                b.putString(editTextEmail.getText().toString(),"email");
+
+                doChangeActivity(context,ResetPasswordActivity.class,b);
+
             }
         });
 
@@ -133,9 +126,7 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
 
             @Override
             public void onClick(View v) {
-
                 finish();
-
             }
         });
 
@@ -150,21 +141,21 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
 
                 if (TextUtils.isEmpty(email)) {
 
-                    Toast.makeText(context, getString(R.string.enter_email_address), Toast.LENGTH_SHORT).show();
+                    showToast(context, getString(R.string.enter_email_address), Toast.LENGTH_SHORT);
 
                     return;
                 }
 
                 if (TextUtils.isEmpty(password)) {
 
-                    Toast.makeText(context, getString(R.string.enter_password), Toast.LENGTH_SHORT).show();
+                    showToast(context, getString(R.string.enter_password), Toast.LENGTH_SHORT);
 
                     return;
                 }
 
                 if (password.length() < 6) {
 
-                    Toast.makeText(context, getString(R.string.minimum_password), Toast.LENGTH_SHORT).show();
+                    showToast(context, getString(R.string.minimum_password), Toast.LENGTH_SHORT);
 
                     return;
                 }
@@ -174,7 +165,7 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
                     progressBar.setVisibility(View.VISIBLE);
 
                     //create firebaseUser
-                    auth.createUserWithEmailAndPassword(email, password)
+                    firebaseAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
 
                                 @Override
@@ -182,22 +173,31 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
 
                                     progressBar.setVisibility(View.GONE);
 
-                                    // If sign in fails, display a message to the firebaseUser. If sign in succeeds
-                                    // the firebaseAuth state listener will be notified and logic to handle the
-                                    // signed in firebaseUser can be handled in the listener.
-
+                                    /* If sign in fails, display a message to the firebaseUser. If sign in succeeds
+                                     the firebaseAuth state listener will be notified and logic to handle the
+                                     signed in firebaseUser can be handled in the listener.*/
                                     if (!task.isSuccessful()) {
 
-                                        Toast.makeText(context, getString(R.string.auth_error) + task.getException(),
-                                                Toast.LENGTH_LONG).show();
+                                        showToast(context, getString(R.string.auth_error) + task.getException(),
+                                                Toast.LENGTH_LONG);
 
                                         Log.d("DEBUG-LOGIN", getString(R.string.auth_error) + task.getException().toString());
 
-                                        Toast.makeText(context, "Servidor não disponível, entre em contato com o Desenvolvedor", Toast.LENGTH_SHORT).show();
+                                        showToast(context, "Servidor não disponível, entre em contato com o Desenvolvedor", Toast.LENGTH_SHORT);
 
                                     } else {
 
-                                        TaskCreateUser taskCreateUsuario = new TaskCreateUser(context, new AsyncResponse<BaseUser>() {
+                                        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+                                        BaseUser user = new User();
+
+                                        user.setFirebaseUUID(firebaseUser.getUid());
+
+                                        user.setEmail(firebaseUser.getEmail());
+
+                                        user.setFirebaseMessageToken(FirebaseInstanceId.getInstance().getToken());
+
+                                        new TaskCreateUser(context, new AsyncResponse<BaseUser>() {
 
                                             @Override
                                             public void processFinish(BaseUser output) {
@@ -209,21 +209,10 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
 
                                                 finish();
                                             }
-                                        });
+                                        }).execute(user);
 
-                                        FirebaseUser firebaseUser = auth.getCurrentUser();
-
-                                        BaseUser usuario = new User();
-
-                                        usuario.setFirebaseUUID(firebaseUser.getUid());
-
-                                        usuario.setEmail(firebaseUser.getEmail());
-
-                                        usuario.setFirebaseMessageToken(FirebaseInstanceId.getInstance().getToken());
-
-                                        taskCreateUsuario.execute(usuario);
-
-                                        Toast.makeText(context, "Servidor não disponível, entre em contato com o Desenvolvedor", Toast.LENGTH_SHORT).show();
+                                        showToast(context, "Servidor não disponível, " +
+                                                "entre em contato com o Desenvolvedor", Toast.LENGTH_SHORT);
                                     }
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
@@ -231,7 +220,7 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
                         @Override
                         public void onFailure(@NonNull Exception e) {
 
-                            Toast.makeText(context, "Não foi Possível cadastrar o usuário", Toast.LENGTH_SHORT).show();
+                            showToast(context, "Não foi Possível cadastrar o usuário", Toast.LENGTH_SHORT);
 
                             Log.e("ERROR LOGIN", e.getMessage());
 
@@ -267,11 +256,15 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
 
         actionBar.setSubtitle(R.string.register);
 
+        if(bundle != null){
+            editTextEmail.setText(bundle.getString("email"));
+        }
+
     }
 
     @Override
     public void doChangeActivity(Context context, Class clazz) {
-
+        startActivity(new Intent(context,clazz));
     }
 
     @Override
@@ -340,9 +333,4 @@ public class SignupActivity extends AppCompatActivity implements MyPattern,
         showSnack(isConnected);
     }
 
-
-    public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
-
-        ConnectivityReceiver.connectivityReceiverListener = listener;
-    }
 }

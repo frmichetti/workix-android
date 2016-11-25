@@ -92,4 +92,6 @@
     <string name="action_add_signup">Increver-se</string>
     <string name="action_see_details">Ver Detalhes</string>
     <string name="minPayment">Pagamento Mínimo</string>
+    <string name="reset_password_failed">Senha não pode ser Resetada! Tente Novamente...</string>
+    <string name="reset_password_success">Senha Resetada!</string>
 </resources>

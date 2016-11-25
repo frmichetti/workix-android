@@ -15,14 +15,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static java.net.HttpURLConnection.HTTP_ACCEPTED;
+import static java.net.HttpURLConnection.HTTP_CREATED;
+import static java.net.HttpURLConnection.HTTP_OK;
+
 public final class HTTP {
 
     private static final String USER_AGENT = "Mozilla/5.0";
 
-    private static final Integer TIME_OUT = 40_000;
+    private static final Integer TIME_OUT = 30_000;
 
     // HTTP GET request
-    public static String sendGet(String url) throws IOException {
+    public static String sendGet(String url) throws IOException, RuntimeException {
 
         URL obj = new URL(url);
 
@@ -47,7 +51,7 @@ public final class HTTP {
 
         String resp;
 
-        if (responseCode == 200 || responseCode == 201) {
+        if (responseCode == HTTP_OK || responseCode == HTTP_CREATED || responseCode == HTTP_ACCEPTED) {
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -67,13 +71,13 @@ public final class HTTP {
             resp = response.toString();
 
         } else {
-            resp = null;
+            throw new RuntimeException("Unexpected Response Code " + responseCode);
         }
 
         return resp;
     }
 
-    public static String sendRequest(String url, String method, String params) throws IOException {
+    public static String sendRequest(String url, String method, String params) throws IOException, RuntimeException {
 
         URL obj = new URL(url);
 
@@ -109,7 +113,7 @@ public final class HTTP {
 
         String resp;
 
-        if (responseCode == 200 || responseCode == 201) {
+        if (responseCode == HTTP_OK || responseCode == HTTP_CREATED || responseCode == HTTP_ACCEPTED) {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
@@ -130,8 +134,7 @@ public final class HTTP {
             resp = response.toString();
 
         } else {
-
-            resp = null;
+            throw new RuntimeException("Unexpected Response Code " + responseCode);
         }
 
         return resp;

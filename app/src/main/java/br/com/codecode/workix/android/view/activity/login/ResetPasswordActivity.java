@@ -6,13 +6,12 @@
  */
 package br.com.codecode.workix.android.view.activity.login;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -23,24 +22,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.util.ConnectivityReceiver;
-import br.com.codecode.workix.android.view.activity.MyPattern;
 
-public class ResetPasswordActivity extends AppCompatActivity implements MyPattern,
-        ConnectivityReceiver.ConnectivityReceiverListener {
+public class ResetPasswordActivity extends BaseActivity {
 
     private ActionBar actionBar;
 
-    private Context context;
-
-    private EditText inputEmail;
-
     private Button btnReset, btnBack;
-
-    private FirebaseAuth auth;
 
     private ProgressBar progressBar;
 
@@ -55,9 +46,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements MyPatter
 
         doCreateListeners();
 
-        auth = FirebaseAuth.getInstance();
-
-
     }
 
     @Override
@@ -67,7 +55,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements MyPatter
 
         doConfigure();
 
-        doCheckConnection();
+        doCheckConnection(context);
     }
 
     @Override
@@ -77,7 +65,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements MyPatter
 
         setSupportActionBar(toolbar);
 
-        inputEmail = (EditText) findViewById(R.id.email);
+        editTextEmail = (EditText) findViewById(R.id.email);
 
         btnReset = (Button) findViewById(R.id.btn_reset_password);
 
@@ -104,38 +92,42 @@ public class ResetPasswordActivity extends AppCompatActivity implements MyPatter
             @Override
             public void onClick(View v) {
 
-                String email = inputEmail.getText().toString().trim();
+                String email = editTextEmail.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(context, getString(R.string.enter_email_address_id), Toast.LENGTH_SHORT).show();
+
+                    showToast(context, getString(R.string.enter_email_address_id), Toast.LENGTH_SHORT);
+
                     return;
                 }
 
-                if (doCheckConnection()) {
+                if (doCheckConnection(context)) {
 
-                    /*
                     progressBar.setVisibility(View.VISIBLE);
 
-                    auth.sendPasswordResetEmail(email)
+                    firebaseAuth.sendPasswordResetEmail(email)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
 
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
 
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(context, getString(R.string.reset_password_success), Toast.LENGTH_SHORT).show();
+                                        showToast(context, getString(R.string.reset_password_success), Toast.LENGTH_SHORT);
                                     } else {
-                                        Toast.makeText(context, getString(R.string.reset_password_failed), Toast.LENGTH_SHORT).show();
+                                        showToast(context, getString(R.string.reset_password_failed), Toast.LENGTH_SHORT);
                                     }
 
                                     progressBar.setVisibility(View.GONE);
                                 }
                             });
-*/
-                    Toast.makeText(context, "Servidor não disponível, entre em contato com o Desenvolvedor", Toast.LENGTH_SHORT).show();
+
+
+                    showToast(context, "Servidor não disponível, entre em contato com o Desenvolvedor",
+                            Toast.LENGTH_SHORT);
+
                 } else {
 
-                    showSnack(doCheckConnection());
+                    showSnack(doCheckConnection(context));
                 }
             }
         });
@@ -161,12 +153,13 @@ public class ResetPasswordActivity extends AppCompatActivity implements MyPatter
 
         actionBar.setSubtitle(R.string.btn_reset_password);
 
+        if(bundle != null){
+            editTextEmail.setText(bundle.getString("email"));
+        }
+
     }
 
-    @Override
-    public void doChangeActivity(Context context, Class clazz) {
 
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -181,14 +174,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements MyPatter
         return super.onOptionsItemSelected(item);
     }
 
-
-    // Method to manually check connection status
-    private boolean doCheckConnection() {
-
-        boolean isConnected = ConnectivityReceiver.isConnected(context);
-
-        return isConnected;
-    }
 
     // Showing the status in Snackbar
     private void showSnack(boolean isConnected) {
@@ -218,15 +203,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements MyPatter
 
     }
 
-    @Override
-    protected void onResume() {
-
-        super.onResume();
-
-        // register connection status listener
-        this.setConnectivityListener(this);
-    }
-
     /**
      * Callback will be triggered when there is change in
      * network connection
@@ -238,8 +214,5 @@ public class ResetPasswordActivity extends AppCompatActivity implements MyPatter
     }
 
 
-    public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
 
-        ConnectivityReceiver.connectivityReceiverListener = listener;
-    }
 }
