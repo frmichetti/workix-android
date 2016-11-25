@@ -1,0 +1,81 @@
+/**
+ * @author Felipe Rodrigues Michetti
+ * @see http://portfolio-frmichetti.rhcloud.com
+ * @see http://www.codecode.com.br
+ * @see mailto:frmichetti@gmail.com
+ */
+package br.com.codecode.workix.android.view.fragment;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.View;
+
+import java.io.Serializable;
+
+import br.com.codecode.workix.android.model.base.BaseCandidate;
+import br.com.codecode.workix.android.model.base.BaseJob;
+
+
+public abstract class BaseFragment extends Fragment {
+
+    protected Context context;
+
+    protected Intent intent;
+
+    protected BaseCandidate candidate;
+
+    protected BaseJob selectedJob;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+        doConfigure();
+
+        doLoadExtras(intent);
+    }
+
+
+    protected abstract void doCastComponents(View rootView);
+
+    protected abstract void doCreateListeners();
+
+    private void doConfigure() {
+
+        context = getContext();
+
+        intent = getActivity().getIntent();
+
+        setRetainInstance(true);
+
+    }
+
+    //TODO FIXME VERIFYME
+    protected void doLoadExtras(Intent intent) {
+
+        if (intent != null) {
+
+            candidate = (BaseCandidate) intent.getSerializableExtra("candidate");
+
+            selectedJob = (BaseJob) intent.getSerializableExtra("job");
+
+        } else {
+            throw new RuntimeException("Forbidden - Could not get Intent");
+        }
+
+    }
+
+    public void doChangeActivity(Context context, Class clazz) {
+
+        startActivity(new Intent(context, clazz)
+                .putExtra("candidate", (Serializable) candidate)
+                .putExtra("job", (Serializable) selectedJob));
+
+    }
+
+
+}
