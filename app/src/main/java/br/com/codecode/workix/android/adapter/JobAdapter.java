@@ -10,7 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.model.base.BaseJob;
+import br.com.codecode.workix.core.models.compat.Job;
+
 
 /**
  * @author Felipe Rodrigues Michetti
@@ -24,10 +25,10 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.MyViewHolder> {
 
     private Context context;
 
-    private ArrayList<BaseJob> jobs;
+    private ArrayList<Job> jobs;
 
 
-    public JobAdapter(Context context, ArrayList<BaseJob> jobs) {
+    public JobAdapter(Context context, ArrayList<Job> jobs) {
         this.context = context;
         this.jobs = jobs;
     }
@@ -44,11 +45,11 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
-        BaseJob job = jobs.get(position);
+        Job job = jobs.get(position);
 
         holder.title.setText(job.getTitle());
 
-        holder.employeer.setText(job.getEmployeer().getName());
+        holder.employeer.setText(job.getCompany().getName());
 
         holder.minPayment.setText(String.valueOf(job.getMinPayment()));
 

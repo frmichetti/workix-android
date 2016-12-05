@@ -101,7 +101,7 @@ public class JobDetailActivity extends BaseActivity {
 
         textViewRequirement.setText(selectedJob.getRequirement());
 
-        textViewEmployeer.setText(selectedJob.getEmployeer().getName());
+        textViewEmployeer.setText(selectedJob.getCompany().getName());
 
         textViewMinPayment.setText(String.valueOf(selectedJob.getMinPayment()));
 

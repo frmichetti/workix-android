@@ -75,6 +75,12 @@ abstract class BaseActivity extends AppCompatActivity implements MyPattern,
         return ConnectivityReceiver.isConnected(context);
     }
 
+    /**
+     * Show Toast Message
+     * @param context Context
+     * @param message Message to Show
+     * @param duration {@link Toast#LENGTH_SHORT} or {@link Toast#LENGTH_LONG}
+     */
     protected final void showToast(Context context, String message, int duration){
         Toast.makeText(context,message,duration).show();
     }

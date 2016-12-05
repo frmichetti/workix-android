@@ -15,9 +15,8 @@ import android.view.View;
 
 import java.io.Serializable;
 
-import br.com.codecode.workix.android.model.base.BaseCandidate;
-import br.com.codecode.workix.android.model.base.BaseJob;
-
+import br.com.codecode.workix.core.models.compat.Candidate;
+import br.com.codecode.workix.core.models.compat.Job;
 
 public abstract class BaseFragment extends Fragment {
 
@@ -25,9 +24,9 @@ public abstract class BaseFragment extends Fragment {
 
     protected Intent intent;
 
-    protected BaseCandidate candidate;
+    protected Candidate candidate;
 
-    protected BaseJob selectedJob;
+    protected Job selectedJob;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,9 +58,9 @@ public abstract class BaseFragment extends Fragment {
 
         if (intent != null) {
 
-            candidate = (BaseCandidate) intent.getSerializableExtra("candidate");
+            candidate = (Candidate) intent.getSerializableExtra("candidate");
 
-            selectedJob = (BaseJob) intent.getSerializableExtra("job");
+            selectedJob = (Job) intent.getSerializableExtra("job");
 
         } else {
             throw new RuntimeException("Forbidden - Could not get Intent");

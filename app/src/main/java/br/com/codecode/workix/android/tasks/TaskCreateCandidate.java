@@ -4,13 +4,11 @@
  * @see http://www.codecode.com.br
  * @see mailto:frmichetti@gmail.com
  */
-package br.com.codecode.workix.android.jobs;
+package br.com.codecode.workix.android.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -21,13 +19,12 @@ import java.io.Serializable;
 
 import br.com.codecode.workix.android.R;
 import br.com.codecode.workix.android.dao.HTTP;
-import br.com.codecode.workix.android.model.base.BaseUser;
-import br.com.codecode.workix.android.model.pojo.User;
+import br.com.codecode.workix.core.models.compat.Candidate;
 
 
-public class TaskCreateUser extends AsyncTask<BaseUser, String, BaseUser> {
+public class TaskCreateCandidate extends AsyncTask<Candidate, String, Candidate> {
 
-    private AsyncResponse delegate = null;
+    private AsyncResponse asyncResponse = null;
 
     private String url;
 
@@ -38,20 +35,20 @@ public class TaskCreateUser extends AsyncTask<BaseUser, String, BaseUser> {
     private String response;
 
 
-    private TaskCreateUser() {
+    private TaskCreateCandidate() {
 
-        Log.d("DEBUG-TASK", "create TaskCreateUser");
+        Log.d("DEBUG-TASK", "create TaskCreateCandidate");
 
     }
 
-    private TaskCreateUser(Context context) {
+    private TaskCreateCandidate(Context context) {
         this();
         this.context = context;
     }
 
-    public TaskCreateUser(Context context, AsyncResponse<BaseUser> delegate) {
+    public TaskCreateCandidate(Context context, AsyncResponse<Candidate> asyncResponse) {
         this(context);
-        this.delegate = delegate;
+        this.asyncResponse = asyncResponse;
     }
 
     @Override
@@ -59,13 +56,13 @@ public class TaskCreateUser extends AsyncTask<BaseUser, String, BaseUser> {
 
         super.onPreExecute();
 
-        url = context.getResources().getString(R.string.server) + "save/user";
+        url = context.getResources().getString(R.string.server) + "save/candidate";
 
         Log.d("DEBUG-TASK", "server config -> " + url);
 
         dialog = new ProgressDialog(context);
 
-        dialog.setTitle(context.getString(R.string.processing));
+        dialog.setTitle("Processando");
 
         dialog.setIndeterminate(true);
 
@@ -78,17 +75,13 @@ public class TaskCreateUser extends AsyncTask<BaseUser, String, BaseUser> {
     }
 
     @Override
-    protected BaseUser doInBackground(@NonNull BaseUser... params) {
+    protected Candidate doInBackground(Candidate... params) throws RuntimeException {
 
-        for(int x=0; x < params.length;x++){
+        for (int x = 0; x < params.length; x++) {
 
-            if(!(params[x] instanceof Serializable)){
+            if (!(params[x] instanceof Serializable)) {
 
-                throw new RuntimeException("Object Must implement Serializable");
-
-            }else if(!(params[x] instanceof Parcelable)){
-
-                throw new RuntimeException("Object Must implement Parcelable");
+                throw new RuntimeException("Object of Param [" + x + "] MUST implements Serializable");
             }
         }
 
@@ -96,24 +89,25 @@ public class TaskCreateUser extends AsyncTask<BaseUser, String, BaseUser> {
 
             publishProgress("Enviando Requisição para o Servidor");
 
-            //TODO FIXME Make a Json
+            //TODO FIXME Create a JSON
 
             response = HTTP.sendRequest(url, "POST", new Gson().toJson(params[0]));
 
         } catch (IOException | RuntimeException e) {
 
-            publishProgress("Fail on Get Response");
+            publishProgress("Falha ao Obter Resposta");
 
             Log.e("Erro", e.getMessage());
         }
 
-        publishProgress("Item received !");
+        publishProgress("Item recebido !");
 
-        //TODO FIXME Receive a Json
+        //TODO FIXME Receive a JSON
 
-        BaseUser u = new Gson().fromJson(response, new TypeToken<User>(){}.getType());
+        Candidate c = new Gson().fromJson(response, new TypeToken<Candidate>() {
+        }.getType());
 
-        return u;
+        return c;
 
     }
 
@@ -127,13 +121,13 @@ public class TaskCreateUser extends AsyncTask<BaseUser, String, BaseUser> {
 
 
     @Override
-    protected void onPostExecute(BaseUser result) {
+    protected void onPostExecute(Candidate result) {
 
-        dialog.setMessage(context.getString(R.string.process_finish));
+        dialog.setMessage("Tarefa Finalizada!");
 
         dialog.dismiss();
 
-        delegate.processFinish(result);
+        asyncResponse.processFinish(result);
 
     }
 }

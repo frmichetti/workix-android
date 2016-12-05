@@ -4,7 +4,7 @@
  * @see http://www.codecode.com.br
  * @see mailto:frmichetti@gmail.com
  */
-package br.com.codecode.workix.android.jobs;
+package br.com.codecode.workix.android.tasks;
 
 import android.support.annotation.NonNull;
 

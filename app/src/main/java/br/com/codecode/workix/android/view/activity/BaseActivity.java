@@ -35,10 +35,10 @@ import com.google.firebase.auth.FirebaseUser;
 import java.io.Serializable;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.model.base.BaseCandidate;
-import br.com.codecode.workix.android.model.base.BaseJob;
 import br.com.codecode.workix.android.util.ConnectivityReceiver;
 import br.com.codecode.workix.android.view.activity.login.LoginActivity;
+import br.com.codecode.workix.core.models.compat.Candidate;
+import br.com.codecode.workix.core.models.compat.Job;
 
 public abstract class BaseActivity extends AppCompatActivity implements MyPattern,
         ConnectivityReceiver.ConnectivityReceiverListener {
@@ -52,8 +52,8 @@ public abstract class BaseActivity extends AppCompatActivity implements MyPatter
     protected Intent intent;
     protected FirebaseAuth firebaseAuth;
     protected FirebaseUser firebaseUser;
-    protected BaseCandidate candidate;
-    protected BaseJob selectedJob;
+    protected Candidate candidate;
+    protected Job selectedJob;
     protected int fragmentId;
     private FirebaseAuth.AuthStateListener authListener;
 
@@ -303,9 +303,9 @@ public abstract class BaseActivity extends AppCompatActivity implements MyPatter
 
         if (bundle != null) {
 
-            candidate = (BaseCandidate) bundle.getSerializable("candidate");
+            candidate = (Candidate) bundle.getSerializable("candidate");
 
-            selectedJob = (BaseJob) bundle.getSerializable("job");
+            selectedJob = (Job) bundle.getSerializable("job");
 
             fragmentId = bundle.getInt("fragmentId");
 
@@ -335,9 +335,9 @@ public abstract class BaseActivity extends AppCompatActivity implements MyPatter
 
         if (intent != null) {
 
-            candidate = (BaseCandidate) intent.getSerializableExtra("candidate");
+            candidate = (Candidate) intent.getSerializableExtra("candidate");
 
-            selectedJob = (BaseJob) intent.getSerializableExtra("job");
+            selectedJob = (Job) intent.getSerializableExtra("job");
 
         }
 

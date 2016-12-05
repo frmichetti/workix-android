@@ -41,11 +41,11 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import java.io.Serializable;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.jobs.AsyncResponse;
-import br.com.codecode.workix.android.jobs.TaskLoginFirebase;
-import br.com.codecode.workix.android.model.base.BaseCandidate;
+import br.com.codecode.workix.android.tasks.AsyncResponse;
+import br.com.codecode.workix.android.tasks.TaskLoginFirebase;
 import br.com.codecode.workix.android.view.activity.CandidateActivity;
 import br.com.codecode.workix.android.view.activity.NewMain;
+import br.com.codecode.workix.core.models.compat.Candidate;
 
 public class LoginActivity extends BaseActivity {
 
@@ -366,10 +366,10 @@ public class LoginActivity extends BaseActivity {
 
                         } else {
 
-                            TaskLoginFirebase taskLoginFirebase = new TaskLoginFirebase(context, new AsyncResponse<BaseCandidate>() {
+                            new TaskLoginFirebase(context, new AsyncResponse<Candidate>() {
 
                                 @Override
-                                public void processFinish(BaseCandidate output) {
+                                public void processFinish(Candidate output) {
 
                                     //TODO Validate Logic HERE
 
@@ -390,9 +390,7 @@ public class LoginActivity extends BaseActivity {
                                     }
 
                                 }
-                            });
-
-                            taskLoginFirebase.execute(firebaseAuth.getCurrentUser().getUid());
+                            }).execute(firebaseAuth.getCurrentUser().getUid());
 
                         }
                     }

@@ -21,9 +21,9 @@ import java.util.ArrayList;
 
 import br.com.codecode.workix.android.R;
 import br.com.codecode.workix.android.adapter.JobAdapter;
-import br.com.codecode.workix.android.jobs.AsyncResponse;
-import br.com.codecode.workix.android.jobs.TaskDownloadJobs;
-import br.com.codecode.workix.android.model.base.BaseJob;
+import br.com.codecode.workix.android.tasks.AsyncResponse;
+import br.com.codecode.workix.android.tasks.TaskDownloadJobs;
+import br.com.codecode.workix.core.models.compat.Job;
 
 
 public class JobsFragment extends BaseFragment {
@@ -32,7 +32,7 @@ public class JobsFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
 
-    private ArrayList<BaseJob> jobs;
+    private ArrayList<Job> jobs;
 
     private SwipeRefreshLayout mySwipeRefreshLayout;
 
@@ -47,7 +47,7 @@ public class JobsFragment extends BaseFragment {
 
         if (savedInstanceState != null) {
 
-            jobs = (ArrayList<BaseJob>) savedInstanceState.getSerializable("jobs");
+            jobs = (ArrayList<Job>) savedInstanceState.getSerializable("jobs");
 
         } else {
 
@@ -130,10 +130,10 @@ public class JobsFragment extends BaseFragment {
 
         Log.d("[DOWNLOAD-JOBS]", "Load Jobs from webservice");
 
-        new TaskDownloadJobs(context, new AsyncResponse<ArrayList<BaseJob>>() {
+        new TaskDownloadJobs(context, new AsyncResponse<ArrayList<Job>>() {
 
             @Override
-            public void processFinish(ArrayList<BaseJob> output) {
+            public void processFinish(ArrayList<Job> output) {
 
                 jobs = output;
 

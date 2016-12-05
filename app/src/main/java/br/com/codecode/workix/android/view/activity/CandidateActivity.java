@@ -24,10 +24,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.jobs.AsyncResponse;
-import br.com.codecode.workix.android.jobs.TaskCreateCandidate;
-import br.com.codecode.workix.android.model.base.BaseCandidate;
-
+import br.com.codecode.workix.android.tasks.AsyncResponse;
+import br.com.codecode.workix.android.tasks.TaskCreateCandidate;
+import br.com.codecode.workix.core.models.compat.Candidate;
 
 public class CandidateActivity extends BaseActivity {
 
@@ -38,7 +37,7 @@ public class CandidateActivity extends BaseActivity {
     private TextInputLayout txtInputLayoutName, txtInputLayoutCPF, txtInputLayoutPhone,
             txtInputLayoutMobilePhone;
 
-    private BaseCandidate candidate;
+    private Candidate candidate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +107,12 @@ public class CandidateActivity extends BaseActivity {
 
                 if (submitForm()) {
 
-                    TaskCreateCandidate taskCreateCandidate = new TaskCreateCandidate(context, new AsyncResponse<BaseCandidate>() {
+                    candidate = doUpdateFields();
+
+                    new TaskCreateCandidate(context, new AsyncResponse<Candidate>() {
 
                         @Override
-                        public void processFinish(BaseCandidate output) {
+                        public void processFinish(Candidate output) {
 
                             candidate = output;
 
@@ -119,11 +120,7 @@ public class CandidateActivity extends BaseActivity {
 
                             finish();
                         }
-                    });
-
-                    candidate = doUpdateFields();
-
-                    taskCreateCandidate.execute(candidate);
+                    }).execute(candidate);
 
                 }
 
@@ -132,7 +129,7 @@ public class CandidateActivity extends BaseActivity {
 
     }
 
-    private BaseCandidate doLoadCustomer(BaseCandidate candidate) {
+    private Candidate doLoadCustomer(Candidate candidate) {
 
         if (candidate != null) {
 
@@ -156,7 +153,7 @@ public class CandidateActivity extends BaseActivity {
         return candidate;
     }
 
-    private BaseCandidate doUpdateFields() {
+    private Candidate doUpdateFields() {
 
         candidate.getUser().setFirebaseMessageToken(FirebaseInstanceId.getInstance().getToken());
 
@@ -183,7 +180,7 @@ public class CandidateActivity extends BaseActivity {
 
         super.doLoadExtras(intent);
 
-        candidate = (BaseCandidate) intent.getSerializableExtra("candidate");
+        candidate = (Candidate) intent.getSerializableExtra("candidate");
 
     }
 

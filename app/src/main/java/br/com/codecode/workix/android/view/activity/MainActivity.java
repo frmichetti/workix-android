@@ -31,9 +31,9 @@ import android.widget.Toast;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.model.pojo.Job;
 import br.com.codecode.workix.android.view.fragment.FragmentDrawer;
 import br.com.codecode.workix.android.view.fragment.JobsFragment;
+import br.com.codecode.workix.core.models.compat.Job;
 
 
 public class MainActivity extends BaseActivity implements FragmentDrawer.FragmentDrawerListener {

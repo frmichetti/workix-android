@@ -4,7 +4,7 @@
  * @see http://www.codecode.com.br
  * @see mailto:frmichetti@gmail.com
  */
-package br.com.codecode.workix.android.jobs;
+package br.com.codecode.workix.android.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -19,17 +19,16 @@ import java.util.Date;
 
 import br.com.codecode.workix.android.R;
 import br.com.codecode.workix.android.dao.HTTP;
-import br.com.codecode.workix.android.model.base.BaseJob;
 import br.com.codecode.workix.android.util.GsonDateDeserializer;
+import br.com.codecode.workix.core.models.compat.Job;
 
-
-public class TaskDownloadJobs extends AsyncTask<Void, String, ArrayList<BaseJob>> {
+public class TaskDownloadJobs extends AsyncTask<Void, String, ArrayList<Job>> {
 
     public AsyncResponse delegate = null;
 
     private String url;
 
-    private ArrayList<BaseJob> jobs;
+    private ArrayList<Job> jobs;
 
     private Context context;
 
@@ -42,7 +41,7 @@ public class TaskDownloadJobs extends AsyncTask<Void, String, ArrayList<BaseJob>
         this.context = context;
     }
 
-    public TaskDownloadJobs(Context context, AsyncResponse<ArrayList<BaseJob>> delegate) {
+    public TaskDownloadJobs(Context context, AsyncResponse<ArrayList<Job>> delegate) {
         this(context);
         this.delegate = delegate;
     }
@@ -62,7 +61,7 @@ public class TaskDownloadJobs extends AsyncTask<Void, String, ArrayList<BaseJob>
 
 
     @Override
-    protected ArrayList<BaseJob> doInBackground(Void... params) {
+    protected ArrayList<Job> doInBackground(Void... params) {
 
         String response = "";
 
@@ -90,10 +89,10 @@ public class TaskDownloadJobs extends AsyncTask<Void, String, ArrayList<BaseJob>
                 .setPrettyPrinting()
                 .registerTypeAdapter(Date.class, new GsonDateDeserializer())
                 .create()
-                .fromJson(response, new TypeToken<ArrayList<BaseJob>>() {
+                .fromJson(response, new TypeToken<ArrayList<Job>>() {
                 }.getType());
 
-        return (jobs != null) ? jobs : new ArrayList<BaseJob>();
+        return (jobs != null) ? jobs : new ArrayList<Job>();
     }
 
 
@@ -107,7 +106,7 @@ public class TaskDownloadJobs extends AsyncTask<Void, String, ArrayList<BaseJob>
 
 
     @Override
-    protected void onPostExecute(ArrayList<BaseJob> result) {
+    protected void onPostExecute(ArrayList<Job> result) {
 
         delegate.processFinish(result);
 

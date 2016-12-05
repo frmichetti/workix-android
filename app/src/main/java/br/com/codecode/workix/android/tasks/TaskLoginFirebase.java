@@ -3,7 +3,7 @@
  * @see http://portfolio-frmichetti.rhcloud.com
  * @see mailto:frmichetti@gmail.com
  */
-package br.com.codecode.workix.android.jobs;
+package br.com.codecode.workix.android.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -24,16 +24,15 @@ import java.io.IOException;
 
 import br.com.codecode.workix.android.R;
 import br.com.codecode.workix.android.dao.HTTP;
-import br.com.codecode.workix.android.model.Token;
-import br.com.codecode.workix.android.model.base.BaseCandidate;
-import br.com.codecode.workix.android.model.pojo.Candidate;
+import br.com.codecode.workix.core.models.compat.Candidate;
+import br.com.codecode.workix.core.models.compat.Token;
 
 
-public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> {
+public class TaskLoginFirebase extends AsyncTask<String, String, Candidate> {
 
     private AsyncResponse asyncResponse = null;
 
-    private BaseCandidate candidate;
+    private Candidate candidate;
 
     private ProgressDialog dialog;
 
@@ -49,7 +48,7 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
         this.context = context;
     }
 
-    public TaskLoginFirebase(Context context, AsyncResponse<BaseCandidate> asyncResponse) {
+    public TaskLoginFirebase(Context context, AsyncResponse<Candidate> asyncResponse) {
         this(context);
         this.asyncResponse = asyncResponse;
     }
@@ -80,7 +79,7 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
     }
 
     @Override
-    protected BaseCandidate doInBackground(String... params) {
+    protected Candidate doInBackground(String... params) {
 
         for(int x = 0 ; x < params.length; x++){
             if(params[x].isEmpty()) throw new RuntimeException("Unexpected String at Param[" + x+"]");
@@ -92,9 +91,7 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
 
             publishProgress("Send Token to Server");
 
-            Token t = new Token();
-
-            t.setKey(params[0]);
+            Token t = Token.builder().withKey(params[0]).build();
 
             response = HTTP.sendRequest(url, "POST", new GsonBuilder().
                     setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
@@ -107,7 +104,7 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
                 publishProgress("Server Response is Null or Empty");
 
 
-            } else if (response.equals("{}")) {
+            } else if (response.equals("{----}")) {
 
                 Log.d("DEBUG", "Existent ID on Firebase");
 
@@ -141,7 +138,7 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
                 publishProgress("Creating Object");
 
                 candidate = new Gson().fromJson(response,
-                        new TypeToken<BaseCandidate>(){}.getType());
+                        new TypeToken<Candidate>(){}.getType());
             }
 
 
@@ -177,7 +174,7 @@ public class TaskLoginFirebase extends AsyncTask<String, String, BaseCandidate> 
 
 
     @Override
-    protected void onPostExecute(BaseCandidate result) {
+    protected void onPostExecute(Candidate result) {
 
         dialog.setMessage(context.getString(R.string.process_finish));
 

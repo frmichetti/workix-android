@@ -35,12 +35,11 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.io.Serializable;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.jobs.AsyncResponse;
-import br.com.codecode.workix.android.jobs.TaskCreateUser;
-import br.com.codecode.workix.android.model.base.BaseUser;
-import br.com.codecode.workix.android.model.pojo.User;
+import br.com.codecode.workix.android.tasks.AsyncResponse;
+import br.com.codecode.workix.android.tasks.TaskCreateUser;
 import br.com.codecode.workix.android.util.ConnectivityReceiver;
 import br.com.codecode.workix.android.view.activity.CandidateActivity;
+import br.com.codecode.workix.core.models.compat.User;
 
 
 public class SignupActivity extends BaseActivity {
@@ -164,7 +163,7 @@ public class SignupActivity extends BaseActivity {
 
                     progressBar.setVisibility(View.VISIBLE);
 
-                    //create firebaseUser
+                    //create fireUser
                     firebaseAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
 
@@ -173,9 +172,9 @@ public class SignupActivity extends BaseActivity {
 
                                     progressBar.setVisibility(View.GONE);
 
-                                    /* If sign in fails, display a message to the firebaseUser. If sign in succeeds
+                                    /* If sign in fails, display a message to the fireUser. If sign in succeeds
                                      the firebaseAuth state listener will be notified and logic to handle the
-                                     signed in firebaseUser can be handled in the listener.*/
+                                     signed in fireUser can be handled in the listener.*/
                                     if (!task.isSuccessful()) {
 
                                         showToast(context, getString(R.string.auth_error) + task.getException(),
@@ -187,20 +186,20 @@ public class SignupActivity extends BaseActivity {
 
                                     } else {
 
-                                        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                                        FirebaseUser fireUser = firebaseAuth.getCurrentUser();
 
-                                        BaseUser user = new User();
+                                        User user = new User();
 
-                                        user.setFirebaseUUID(firebaseUser.getUid());
+                                        user.setFirebaseUUID(fireUser.getUid());
 
-                                        user.setEmail(firebaseUser.getEmail());
+                                        user.setEmail(fireUser.getEmail());
 
                                         user.setFirebaseMessageToken(FirebaseInstanceId.getInstance().getToken());
 
-                                        new TaskCreateUser(context, new AsyncResponse<BaseUser>() {
+                                        new TaskCreateUser(context, new AsyncResponse<User>() {
 
                                             @Override
-                                            public void processFinish(BaseUser output) {
+                                            public void processFinish(User output) {
 
                                                 //TODO Implementar Logica do Login
 
