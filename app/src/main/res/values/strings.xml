@@ -116,8 +116,8 @@
     <string name="minPayment">Min Payment</string>
     <string name="action_add_signup">Sign Up</string>
     <string name="action_see_details">See More Details</string>
-    <string name="reset_password_success">Password is Reseted!</string>
-    <string name="reset_password_failed">Password Cannot Be Reseted! Try Again...</string>
+    <string name="reset_password_success" />
+    <string name="reset_password_failed" />
 </resources>
 
 

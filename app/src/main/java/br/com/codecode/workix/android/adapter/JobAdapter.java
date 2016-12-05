@@ -71,9 +71,9 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.MyViewHolder> {
 
             title = (TextView) view.findViewById(R.id.title);
 
-            minPayment = (TextView) view.findViewById(R.id.minPayment);
+           // minPayment = (TextView) view.findViewById(R.id.minPayment);
 
-            employeer = (TextView) view.findViewById(R.id.employeer);
+            //employeer = (TextView) view.findViewById(R.id.employeer);
 
 
         }
