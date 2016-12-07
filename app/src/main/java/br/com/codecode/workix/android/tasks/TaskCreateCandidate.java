@@ -11,15 +11,23 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.dao.HTTP;
 import br.com.codecode.workix.core.models.compat.Candidate;
+import br.com.codecode.workix.util.GsonProvider;
+import br.com.codecode.workix.util.VolleyProvider;
 
 
 public class TaskCreateCandidate extends AsyncTask<Candidate, String, Candidate> {
@@ -33,6 +41,8 @@ public class TaskCreateCandidate extends AsyncTask<Candidate, String, Candidate>
     private Context context;
 
     private String response;
+
+    private Candidate c;
 
 
     private TaskCreateCandidate() {
@@ -85,27 +95,37 @@ public class TaskCreateCandidate extends AsyncTask<Candidate, String, Candidate>
             }
         }
 
+
         try {
 
-            publishProgress("Enviando Requisição para o Servidor");
+            VolleyProvider.getInstance(context).addToRequestQueue(new JsonObjectRequest(Request.Method.POST, url,
+                    new JSONObject(GsonProvider.buildGson().toJson(params[0])), new Response.Listener<JSONObject>() {
 
-            //TODO FIXME Create a JSON
+                @Override
+                public void onResponse(JSONObject response) {
 
-            response = HTTP.sendRequest(url, "POST", new Gson().toJson(params[0]));
+                    publishProgress("Item recebido !");
 
-        } catch (IOException | RuntimeException e) {
+                    c = GsonProvider.buildGson().fromJson(response.toString(), new TypeToken<Candidate>(){}.getType());
 
-            publishProgress("Falha ao Obter Resposta");
+                }
 
-            Log.e("Erro", e.getMessage());
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    publishProgress("Cannot be Save Changes !");
+                    c = c;
+                }
+
+            }));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-        publishProgress("Item recebido !");
 
-        //TODO FIXME Receive a JSON
-
-        Candidate c = new Gson().fromJson(response, new TypeToken<Candidate>() {
-        }.getType());
+        publishProgress("Enviando Requisição para o Servidor");
 
         return c;
 

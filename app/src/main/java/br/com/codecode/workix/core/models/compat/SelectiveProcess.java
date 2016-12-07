@@ -43,6 +43,10 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 
     private int version;
 
+    private Calendar start;
+
+    private Calendar expire;
+
     /**
      * Public Default Constructor
      */
@@ -259,6 +263,20 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 	}
     }
 
-    
 
+    public Calendar getExpire() {
+        return expire;
+    }
+
+    public void setExpire(Calendar expire) {
+        this.expire = expire;
+    }
+
+    public Calendar getStart() {
+        return start;
+    }
+
+    public void setStart(Calendar start) {
+        this.start = start;
+    }
 }

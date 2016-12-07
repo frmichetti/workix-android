@@ -12,23 +12,35 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.Iterator;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.dao.HTTP;
 import br.com.codecode.workix.core.models.compat.Candidate;
 import br.com.codecode.workix.core.models.compat.Token;
+import br.com.codecode.workix.util.GsonProvider;
+import br.com.codecode.workix.util.VolleyProvider;
 
 
-public class TaskLoginFirebase extends AsyncTask<String, String, Candidate> {
+public class TaskLoginFirebase extends AsyncTask<Token, String, Candidate> {
 
     private AsyncResponse asyncResponse = null;
 
@@ -79,90 +91,105 @@ public class TaskLoginFirebase extends AsyncTask<String, String, Candidate> {
     }
 
     @Override
-    protected Candidate doInBackground(String... params) {
+    protected Candidate doInBackground(Token... params) {
 
-        for(int x = 0 ; x < params.length; x++){
-            if(params[x].isEmpty()) throw new RuntimeException("Unexpected String at Param[" + x+"]");
+        for (int x = 0; x < params.length; x++) {
+            if (params[x] == null)
+                throw new RuntimeException("Unexpected Token at Param[" + x + "]");
         }
-
-        String response = "";
 
         try {
 
             publishProgress("Send Token to Server");
 
-            Token t = Token.builder().withKey(params[0]).build();
+            VolleyProvider.getInstance(context).addToRequestQueue(new JsonObjectRequest(Request.Method.POST, url,
+                    new JSONObject(GsonProvider.buildGson().toJson(params[0])), new Response.Listener<JSONObject>() {
 
-            response = HTTP.sendRequest(url, "POST", new GsonBuilder().
-                    setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-                    .create().toJson(t));
+                @Override
+                public void onResponse(JSONObject response) {
 
-            publishProgress("Objeto recebido");
+                    Log.d("JSON", response.toString());
 
-            if ((response.isEmpty() || (response.equals(""))|| response == null)) {
-
-                publishProgress("Server Response is Null or Empty");
+                    publishProgress("Objeto recebido");
 
 
-            } else if (response.equals("{----}")) {
+                    try {
 
-                Log.d("DEBUG", "Existent ID on Firebase");
+                        if (response.has("action") && response.isNull("action")) {
 
-                Log.d("DEBUG", "Empty Object");
+                            throw new RuntimeException("Server Response is Null or Empty");
 
-                FirebaseAuth.getInstance().getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        } else if (response.has("action") && response.get("action").equals("rebuild")) {
 
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                            Log.d("DEBUG", "Existent ID on Firebase");
 
-                        Toast.makeText(context, context.getString(R.string.delete_account_success), Toast.LENGTH_LONG).show();
+                            Log.d("DEBUG", "Empty Object");
 
-                        Toast.makeText(context, context.getString(R.string.repeat_register_operation), Toast.LENGTH_LONG).show();
+                            FirebaseAuth.getInstance().getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                    Toast.makeText(context, context.getString(R.string.delete_account_success), Toast.LENGTH_LONG).show();
+
+                                    Toast.makeText(context, context.getString(R.string.repeat_register_operation), Toast.LENGTH_LONG).show();
 
 
+                                }
+
+                            }).addOnFailureListener(new OnFailureListener() {
+
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    Toast.makeText(context, context.getString(R.string.delete_account_failed), Toast.LENGTH_LONG).show();
+
+                                    Toast.makeText(context, context.getString(R.string.could_not_authorize), Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+
+                        } else {
+
+                            publishProgress("Creating Object");
+
+                            candidate = GsonProvider.buildGson().fromJson(response.toString(),
+                                    new TypeToken<Candidate>() {
+                                    }.getType());
+
+                        }
+
+                    } catch (JSONException | JsonParseException e) {
+                        e.printStackTrace();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
 
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+                }
 
-                        Toast.makeText(context, context.getString(R.string.delete_account_failed), Toast.LENGTH_LONG).show();
+            }, new Response.ErrorListener() {
 
-                        Toast.makeText(context, context.getString(R.string.could_not_authorize), Toast.LENGTH_LONG).show();
-                    }
-                });
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    candidate = null;
+
+                    Log.e("Error", "Unexpected Response : " + error.getMessage());
+
+                    error.printStackTrace();
+                }
+
+            }));
+
+            publishProgress("Login Validated!");
+
+            publishProgress("Enter...");
 
 
-            } else {
-
-                publishProgress("Creating Object");
-
-                candidate = new Gson().fromJson(response,
-                        new TypeToken<Candidate>(){}.getType());
-            }
-
-
-        } catch (IOException e) {
-
-            publishProgress("Fail on Receive Object");
-
-            Log.e("Erro", e.getMessage());
-
-        }catch (RuntimeException e){
-
-            publishProgress("Fail on Receive Object");
-
-            Log.e("Error" ,"Unexpected Response : " + e.getMessage());
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-        publishProgress("Login Validated!");
-
-        publishProgress("Enter...");
-
-        return (candidate != null) ? (candidate) : (new Candidate());
+        return candidate;
     }
-
 
     @Override
     protected void onProgressUpdate(String... values) {
@@ -183,6 +210,4 @@ public class TaskLoginFirebase extends AsyncTask<String, String, Candidate> {
         asyncResponse.processFinish(result);
 
     }
-
-
 }

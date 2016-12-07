@@ -118,6 +118,7 @@
     <string name="action_see_details">See More Details</string>
     <string name="reset_password_success" />
     <string name="reset_password_failed" />
+    <string name="hint_birthDate">Insert your Birth Date</string>
 </resources>
 
 

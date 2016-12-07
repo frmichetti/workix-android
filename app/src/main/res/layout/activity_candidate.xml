@@ -34,7 +34,7 @@
                     android:layout_below="@+id/toolbar"
                     android:hint="@string/hint_name"
                     android:inputType="text"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -55,7 +55,7 @@
                     android:ems="10"
                     android:hint="@string/hint_phone"
                     android:inputType="phone"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -75,7 +75,7 @@
                     android:ems="10"
                     android:hint="@string/hint_mobilePhone"
                     android:inputType="phone"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -95,7 +95,26 @@
                     android:layout_below="@+id/editTextTelefone"
                     android:hint="@string/hint_cpf"
                     android:inputType="number"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_birthDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/input_layout_cpf"
+                android:layout_marginTop="6dp">
+
+                <EditText
+                    android:id="@+id/editTextBirthDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/editTextCPF"
+                    android:hint="@string/hint_birthDate"
+                    android:inputType="date"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
         </RelativeLayout>

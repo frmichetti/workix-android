@@ -50,11 +50,17 @@ public abstract class BaseActivity extends AppCompatActivity implements MyPatter
     protected Context context;
 
     protected Intent intent;
+
     protected FirebaseAuth firebaseAuth;
+
     protected FirebaseUser firebaseUser;
+
     protected Candidate candidate;
+
     protected Job selectedJob;
+
     protected int fragmentId;
+
     private FirebaseAuth.AuthStateListener authListener;
 
     protected BaseActivity() {
@@ -135,9 +141,9 @@ public abstract class BaseActivity extends AppCompatActivity implements MyPatter
 
         super.onSaveInstanceState(outState);
 
-        outState.putSerializable("candidate", (Serializable) candidate);
+        outState.putSerializable("candidate", candidate);
 
-        outState.putSerializable("job", (Serializable) selectedJob);
+        outState.putSerializable("job", selectedJob);
 
         outState.putInt("fragmentId", fragmentId);
 
@@ -408,23 +414,6 @@ public abstract class BaseActivity extends AppCompatActivity implements MyPatter
                 .putExtra("candidate", (Serializable) candidate)
                 .putExtra("job", (Serializable) selectedJob));
 
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-
-        handleIntent(intent);
-    }
-
-    protected void handleIntent(Intent intent) {
-
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-
-            String query = intent.getStringExtra(SearchManager.QUERY);
-
-            Toast.makeText(context, "Looking for " + query, Toast.LENGTH_LONG).show();
-            //use the query to search your data somehow
-        }
     }
 
 }

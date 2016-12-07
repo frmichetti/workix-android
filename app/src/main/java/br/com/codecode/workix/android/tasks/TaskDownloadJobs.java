@@ -10,17 +10,24 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.dao.HTTP;
-import br.com.codecode.workix.android.util.GsonDateDeserializer;
 import br.com.codecode.workix.core.models.compat.Job;
+import br.com.codecode.workix.util.GsonProvider;
+import br.com.codecode.workix.util.VolleyProvider;
+
 
 public class TaskDownloadJobs extends AsyncTask<Void, String, ArrayList<Job>> {
 
@@ -65,32 +72,37 @@ public class TaskDownloadJobs extends AsyncTask<Void, String, ArrayList<Job>> {
 
         String response = "";
 
-        try {
-
             publishProgress("Enviando Requisição para o Servidor");
 
             //TODO FIXME Receive JSON
 
-            response = HTTP.sendGet(url);
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
 
-        } catch (IOException e) {
+                @Override
+                public void onResponse(JSONObject response) {
 
-            publishProgress("Falha ao Obter Resposta");
+                    publishProgress("Itens recebidos !");
 
-            Log.e("Erro", e.getMessage());
-        }
+                    //TODO FIXME Response Json
 
-        publishProgress("Itens recebidos !");
+                    jobs = GsonProvider.buildGson().fromJson(response.toString(), new TypeToken<ArrayList<Job>>(){}.getType());
 
-        //TODO FIXME Response Json
+                }
+            }, new Response.ErrorListener() {
 
-        jobs = new GsonBuilder()
-                .excludeFieldsWithoutExposeAnnotation()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Date.class, new GsonDateDeserializer())
-                .create()
-                .fromJson(response, new TypeToken<ArrayList<Job>>() {
-                }.getType());
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    publishProgress("Falha ao Obter Resposta");
+
+                    Log.e("Erro", error.getMessage());
+
+                }
+            });
+
+                    // Access the RequestQueue through your singleton class.
+                    VolleyProvider.getInstance(context).addToRequestQueue(jsObjRequest);
+
 
         return (jobs != null) ? jobs : new ArrayList<Job>();
     }

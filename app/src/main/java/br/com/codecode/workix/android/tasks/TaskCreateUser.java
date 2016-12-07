@@ -12,20 +12,25 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.gson.Gson;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 
 import br.com.codecode.workix.android.R;
-import br.com.codecode.workix.android.dao.HTTP;
 import br.com.codecode.workix.core.models.compat.User;
-
+import br.com.codecode.workix.util.GsonProvider;
+import br.com.codecode.workix.util.VolleyProvider;
 
 public class TaskCreateUser extends AsyncTask<User, String, User> {
 
-    private AsyncResponse delegate = null;
+    private AsyncResponse asyncResponse = null;
 
     private String url;
 
@@ -34,6 +39,8 @@ public class TaskCreateUser extends AsyncTask<User, String, User> {
     private Context context;
 
     private String response;
+
+    private User u;
 
 
     private TaskCreateUser() {
@@ -47,9 +54,9 @@ public class TaskCreateUser extends AsyncTask<User, String, User> {
         this.context = context;
     }
 
-    public TaskCreateUser(Context context, AsyncResponse<User> delegate) {
+    public TaskCreateUser(Context context, AsyncResponse<User> asyncResponse) {
         this(context);
-        this.delegate = delegate;
+        this.asyncResponse = asyncResponse;
     }
 
     @Override
@@ -91,30 +98,44 @@ public class TaskCreateUser extends AsyncTask<User, String, User> {
                 throw new RuntimeException("Object of Param [" + x + "] MUST implements Serializable");
             }
         }
-            try {
 
                 publishProgress("Enviando Requisição para o Servidor");
 
-                //TODO FIXME Make a Json
+        try {
 
-                response = HTTP.sendRequest(url, "POST", new Gson().toJson(params[0]));
+            VolleyProvider.getInstance(context).addToRequestQueue(new JsonObjectRequest(Request.Method.POST, url,
+                    new JSONObject(GsonProvider.buildGson().toJson(params[0])), new Response.Listener<JSONObject>() {
 
-            } catch (IOException | RuntimeException e) {
+                @Override
+                public void onResponse(JSONObject response) {
 
-                publishProgress("Fail on Get Response");
+                    publishProgress("Item received !");
 
-                Log.e("Error", e.getMessage());
-            }
+                    u = GsonProvider.buildGson().fromJson(response.toString(), new TypeToken<User>(){}.getType());
 
-            publishProgress("Item received !");
+                }
 
-            //TODO FIXME Receive a Json
+            }, new Response.ErrorListener() {
 
-            User u = new Gson().fromJson(response, new TypeToken<User>(){}.getType());
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
-            return u;
+                    u = null;
+
+                    error.printStackTrace();
+                }
 
 
+            }));
+
+        } catch (JSONException e) {
+
+            e.printStackTrace();
+
+        }
+
+
+        return u;
     }
 
     @Override
@@ -133,7 +154,7 @@ public class TaskCreateUser extends AsyncTask<User, String, User> {
 
         dialog.dismiss();
 
-        delegate.processFinish(result);
+        asyncResponse.processFinish(result);
 
     }
 }

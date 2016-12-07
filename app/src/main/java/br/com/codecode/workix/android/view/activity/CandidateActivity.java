@@ -14,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -32,12 +31,11 @@ public class CandidateActivity extends BaseActivity {
 
     private FloatingActionButton fabConfirm;
 
-    private EditText editTextName, editTextCPF, editTextPhone, editTextMobilePhone;
+    private EditText editTextName, editTextCPF, editTextPhone, editTextMobilePhone, editTextBirthDate;
 
     private TextInputLayout txtInputLayoutName, txtInputLayoutCPF, txtInputLayoutPhone,
-            txtInputLayoutMobilePhone;
+            txtInputLayoutMobilePhone, txtInputBirthDate;
 
-    private Candidate candidate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +57,9 @@ public class CandidateActivity extends BaseActivity {
 
         super.onPostCreate(savedInstanceState);
 
-        doLoadCustomer(candidate);
+        doFillFields();
+
+        if(candidate == null || candidate.getUser() == null) throw new RuntimeException("Forbidden Candidate or User is Null");
 
     }
 
@@ -83,6 +83,10 @@ public class CandidateActivity extends BaseActivity {
         editTextMobilePhone = (EditText) findViewById(R.id.editTextMobilePhone);
 
         txtInputLayoutMobilePhone = (TextInputLayout) findViewById(R.id.input_layout_mobilePhone);
+
+        editTextBirthDate = (EditText) findViewById(R.id.editTextBirthDate);
+
+        txtInputBirthDate = (TextInputLayout) findViewById(R.id.input_layout_birthDate);
 
         fabConfirm = (FloatingActionButton) findViewById(R.id.fab_action_done);
 
@@ -129,28 +133,18 @@ public class CandidateActivity extends BaseActivity {
 
     }
 
-    private Candidate doLoadCustomer(Candidate candidate) {
-
-        if (candidate != null) {
+    private void doFillFields() {
 
             editTextName.setText(candidate.getName());
 
             editTextCPF.setText(String.valueOf(candidate.getCpf()));
 
-        } else {
-
-            try {
-
+            if(firebaseUser.getDisplayName() != null){
                 editTextName.setText(firebaseUser.getDisplayName());
-
-            } catch (NullPointerException e) {
-
-                Log.d("DEBUG-USER", "Usuario sem Valores na conta");
             }
 
-        }
+            editTextBirthDate.setText(candidate.getBirthDate().toString());
 
-        return candidate;
     }
 
     private Candidate doUpdateFields() {

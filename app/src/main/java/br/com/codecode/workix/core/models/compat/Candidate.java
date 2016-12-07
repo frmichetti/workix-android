@@ -19,7 +19,7 @@ public class Candidate extends Person {
     private long id, cpf;
 
     /**
-     * Public Default Constructor for JPA Compatibility Only
+     * Public Default Constructor
      */
     public Candidate() {
     }

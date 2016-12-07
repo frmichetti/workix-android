@@ -60,8 +60,6 @@ public class NewMain extends BaseActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        handleIntent(getIntent());
-
 
     }
 

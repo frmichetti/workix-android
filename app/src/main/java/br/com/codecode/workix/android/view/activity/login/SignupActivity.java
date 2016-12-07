@@ -39,6 +39,7 @@ import br.com.codecode.workix.android.tasks.AsyncResponse;
 import br.com.codecode.workix.android.tasks.TaskCreateUser;
 import br.com.codecode.workix.android.util.ConnectivityReceiver;
 import br.com.codecode.workix.android.view.activity.CandidateActivity;
+import br.com.codecode.workix.core.models.compat.Candidate;
 import br.com.codecode.workix.core.models.compat.User;
 
 
@@ -73,6 +74,12 @@ public class SignupActivity extends BaseActivity {
         doConfigure();
 
         doCheckConnection();
+
+        //TODO REMOVEME
+        editTextEmail.setText("frmichetti@gmail.com");
+
+        //TODO REMOVEME
+        editTextPassword.setText("123456");
     }
 
     @Override
@@ -182,13 +189,12 @@ public class SignupActivity extends BaseActivity {
 
                                         Log.d("DEBUG-LOGIN", getString(R.string.auth_error) + task.getException().toString());
 
-                                        showToast(context, "Servidor não disponível, entre em contato com o Desenvolvedor", Toast.LENGTH_SHORT);
 
                                     } else {
 
                                         FirebaseUser fireUser = firebaseAuth.getCurrentUser();
 
-                                        User user = new User();
+                                        final User user = new User();
 
                                         user.setFirebaseUUID(fireUser.getUid());
 
@@ -201,17 +207,19 @@ public class SignupActivity extends BaseActivity {
                                             @Override
                                             public void processFinish(User output) {
 
-                                                //TODO Implementar Logica do Login
+                                                if(output == null) throw new RuntimeException("Forbidden - User is Null");
 
                                                 startActivity(new Intent(context, CandidateActivity.class)
-                                                        .putExtra("user", (Serializable) output));
+                                                            .putExtra("user", output));
 
                                                 finish();
+
+
+
+
                                             }
                                         }).execute(user);
 
-                                        showToast(context, "Servidor não disponível, " +
-                                                "entre em contato com o Desenvolvedor", Toast.LENGTH_SHORT);
                                     }
                                 }
                             }).addOnFailureListener(new OnFailureListener() {

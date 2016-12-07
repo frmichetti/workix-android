@@ -46,6 +46,7 @@ import br.com.codecode.workix.android.tasks.TaskLoginFirebase;
 import br.com.codecode.workix.android.view.activity.CandidateActivity;
 import br.com.codecode.workix.android.view.activity.NewMain;
 import br.com.codecode.workix.core.models.compat.Candidate;
+import br.com.codecode.workix.core.models.compat.Token;
 
 public class LoginActivity extends BaseActivity {
 
@@ -173,7 +174,6 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View v) {
 
                 doChangeActivity(context,SignupActivity.class);
-
             }
         });
 
@@ -183,7 +183,6 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View v) {
 
                 doChangeActivity(context,ResetPasswordActivity.class);
-
 
             }
         });
@@ -371,26 +370,28 @@ public class LoginActivity extends BaseActivity {
                                 @Override
                                 public void processFinish(Candidate output) {
 
-                                    //TODO Validate Logic HERE
+                                    if(output == null) throw new RuntimeException("Forbidden - Candidate is Null");
 
-                                    if (output.getUser() != null) {
+                                    if(output != null && output.getUser() == null) throw new RuntimeException("Forbidden - User for Candidate is Null");
 
-                                        startActivity(new Intent(context, NewMain.class)
-                                                .putExtra("candidate", (Serializable) output)
-                                        );
+                                    if(output.getId() == 0){
+
+                                        startActivity(new Intent(context, CandidateActivity.class)
+                                                .putExtra("candidate", output));
 
                                         finish();
 
-                                    } else {
+                                    }else{
 
-                                        startActivity(new Intent(context, CandidateActivity.class)
-                                                .putExtra("candidate", (Serializable) output));
+                                        startActivity(new Intent(context, NewMain.class)
+                                                .putExtra("candidate", output)
+                                        );
 
                                         finish();
                                     }
 
                                 }
-                            }).execute(firebaseAuth.getCurrentUser().getUid());
+                            }).execute(Token.builder().withKey(firebaseAuth.getCurrentUser().getUid()).build());
 
                         }
                     }
@@ -432,10 +433,38 @@ public class LoginActivity extends BaseActivity {
 
                             showToast(context, "Authentication failed.",
                                     Toast.LENGTH_SHORT);
+                        }else{
+
+                            new TaskLoginFirebase(context, new AsyncResponse<Candidate>() {
+
+                                @Override
+                                public void processFinish(Candidate output) {
+
+                                    //TODO Validate Logic HERE
+
+                                    if (output.getUser() != null) {
+
+                                        startActivity(new Intent(context, NewMain.class)
+                                                .putExtra("candidate", output)
+                                        );
+
+                                        finish();
+
+                                    } else {
+
+                                        startActivity(new Intent(context, CandidateActivity.class)
+                                                .putExtra("candidate", output));
+
+                                        finish();
+                                    }
+
+                                }
+                            }).execute(Token.builder().withKey(firebaseAuth.getCurrentUser().getUid()).build());
                         }
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
+
             @Override
             public void onFailure(@NonNull Exception e) {
 
