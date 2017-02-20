@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="server" translatable="false">http://192.168.1.30:8080/workix/services/</string>
+    <!--<string name="server" translatable="false">http://192.168.1.30:8080/workix/services/</string>-->
+    <string name="server" translatable="false">"http://www.workix.com.br/services/"</string>
 </resources>
