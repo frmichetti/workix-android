@@ -3,18 +3,20 @@ package br.com.codecode.workix.core.models.compat;
 import java.util.HashSet;
 import java.util.Set;
 
+import br.com.codecode.workix.core.interfaces.Buildable;
+
+
 /**
- * Resume Class for Compatibility
- * <br>Without Annotations
- * 
+ * Resume JPA with Inherited Fields and Methods
+ * No Anotation for Compatibility Only with Older Versions
  * @author felipe
- * @since 1.1
+ * @since 1.0
  * @version 1.1
  * @see MyEntity
  */
 public class Resume extends MyEntity {
-
-    private static final long serialVersionUID = 1L;
+   
+    private static final long serialVersionUID = 7569771700044121495L;
 
     /**
      * Owner of Resume<br>
@@ -25,7 +27,6 @@ public class Resume extends MyEntity {
     /**
      * One {@link Resume} To Many {@link Education}
      */
-
     private Set<Education> educations;
 
     /**
@@ -39,13 +40,37 @@ public class Resume extends MyEntity {
 
     /**
      * One {@link Resume} To Many {@link Skill}
-     */
+     */    
     private Set<Skill> skills;
 
     /**
-     * Public Default Constructor
+     * Public Default Constructor for JPA Compatibility Only
      */
-    public Resume(){}
+    public Resume() {}
+
+    /**
+     * Public Constructor for {@link Builder} Compatibility
+     * 
+     * @see Buildable
+     * @param builder
+     *            Builder for Generate a New Resume
+     */
+    private Resume(Builder builder) {	
+	this.candidate = builder.getCandidate();
+	this.objective = builder.getObjective();
+	this.content = builder.getContent();
+	this.experiences = builder.getExperiences();
+	this.educations = builder.getEducations();
+	this.skills = builder.getSkills();
+    }
+
+    /**
+     * Creates builder to build {@link Resume}.
+     * @return created builder
+     */
+    public static Builder builder() {
+	return new Builder();
+    }
 
     public void addEducation(Education education) {
 	if (educations == null)
@@ -85,6 +110,7 @@ public class Resume extends MyEntity {
 	return experiences;
     }
 
+    @Override
     public long getId() {
 	return this.id;
     }
@@ -95,15 +121,6 @@ public class Resume extends MyEntity {
 
     public Set<Skill> getSkills() {
 	return skills;
-    }
-
-    /**
-     * Initialize Fields
-     */
-    protected void init() {
-	educations = new HashSet<Education>();
-	experiences = new HashSet<Experience>();
-	skills = new HashSet<Skill>();
     }
 
     public void removeEducation(Education education) {
@@ -143,6 +160,7 @@ public class Resume extends MyEntity {
 	this.experiences = experiences;
     }
 
+    @Override
     public void setId(long id) {
 	this.id = id;
     }
@@ -153,6 +171,57 @@ public class Resume extends MyEntity {
 
     public void setSkills(Set<Skill> skills) {
 	this.skills = skills;
+    }
+
+    /**
+     * Builder to build {@link Resume}.
+     */    
+    public static final class Builder extends Resume implements Buildable<Resume> {
+
+	private static final long serialVersionUID = -5218494421810694002L;
+
+	/**
+	 * Disabled Empty Constructor
+	 */
+	private Builder(){}
+
+	/**
+	 * @return a new Resume
+	 */
+	@Override
+	public Resume build() {
+	    return new Resume(this);
+	}
+
+	public Builder withCandidate(Candidate candidate) {
+	    super.candidate = candidate;
+	    return this;
+	}
+
+	public Builder withContent(String content) {
+	    super.content = content;
+	    return this;
+	}
+
+	public Builder withEducations(Set<Education> educations) {
+	    super.educations = educations;
+	    return this;
+	}
+
+	public Builder withExperiences(Set<Experience> experiences) {
+	    super.experiences = experiences;
+	    return this;
+	}	
+
+	public Builder withObjective(String objective) {
+	    super.objective = objective;
+	    return this;
+	}
+
+	public Builder withSkills(Set<Skill> skills) {
+	    super.skills = skills;
+	    return this;
+	}
     }
 
 }

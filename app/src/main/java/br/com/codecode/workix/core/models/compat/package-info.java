@@ -1,9 +1,8 @@
 /**
- * Models Package for Compatibility<br> 
- * Without Annotations
+ * Models Package used in JPA Implementation
  * 
  * @author felipe
- * @version 1.1
- * @since 1.1
+ * @version 1.0
+ * @since 1.0
  */
 package br.com.codecode.workix.core.models.compat;

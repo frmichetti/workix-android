@@ -1,34 +1,31 @@
 package br.com.codecode.workix.core.models.compat;
 
 /**
- * Person Class for Compatibility <br>
+ * Person JPA with Inherited Fields and Methods <br>
  * Abstract Class for share common Fields with {@link Company} and
- * {@link Candidate} <br>
- * Without Annotations
- * 
+ * {@link Candidate}
+ * No Anotation for Compatibility Only with Older Versions
  * @author felipe
  * @see MyEntity
- * @see Person
- * @since 1.1
- * @version 1.1
- * @see <a href=
- *      "http://wiki.fasterxml.com/JacksonFAQ#Deserializing_Abstract_types">
- *      DeSerializing Abstract Types</a>
+ * @since 1.0
+ * @version 1.1 
+ * @see <a href="http://wiki.fasterxml.com/JacksonFAQ#Deserializing_Abstract_types">
+ * DeSerializing Abstract Types</a>
  */
 abstract class Person extends MyEntity {
+   
+    private static final long serialVersionUID = 703693002246144451L;
+    
+    private String name;
 
-    private static final long serialVersionUID = 1L;
+    private User user;
 
     private Contact contact;
 
     private Locale locale;
 
-    private String name;
-
-    private User user;
-
     /**
-     * Public Default Constructor
+     * Public Default Constructor for JPA Compatibility Only
      */
     public Person(){}
 
@@ -39,7 +36,7 @@ abstract class Person extends MyEntity {
     public Locale getLocale() {
 	return locale;
     }
-
+    
     public String getName() {
 	return name;
     }

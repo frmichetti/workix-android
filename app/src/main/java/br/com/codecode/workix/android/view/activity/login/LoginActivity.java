@@ -370,10 +370,12 @@ public class LoginActivity extends BaseActivity {
                                 @Override
                                 public void processFinish(Candidate output) {
 
+                                    //FIXME REMOVE ME
+/*
                                     if(output == null) throw new RuntimeException("Forbidden - Candidate is Null");
 
                                     if(output != null && output.getUser() == null) throw new RuntimeException("Forbidden - User for Candidate is Null");
-
+*/
                                     if(output.getId() == 0){
 
                                         startActivity(new Intent(context, CandidateActivity.class)

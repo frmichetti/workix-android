@@ -2,28 +2,49 @@ package br.com.codecode.workix.core.models.compat;
 
 import java.io.Serializable;
 
+import br.com.codecode.workix.core.interfaces.Buildable;
+
 /**
- * Contact Class for Compatibility
- * <br>Without Annotations 
+ * Contact JPA Embeddable
+ * No Anotation for Compatibility Only with Older Versions
  * @author felipe
- * @since 1.1
+ * @since 1.0
  * @version 1.1
  * @see Serializable
  */
 public class Contact implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2482737185460142872L;
 
     private long mobilePhone;
 
     /**
-     * Public Default Constructor
+     * Public Default Constructor for JPA Compatibility Only
      */
-    public Contact(){}    
+    public Contact(){}
+
+    /**
+     * Public Constructor for {@link Builder} Compatibility
+     * 
+     * @see Buildable
+     * @param builder
+     *            Builder for Generate a New Contact
+     */
+    public Contact(Builder builder) {
+	this.mobilePhone = builder.getMobilePhone();
+    }
+
+    /**
+     * Creates builder to build {@link Contact}.
+     * @return created builder
+     */    
+    public static Builder builder() {
+	return new Builder();
+    }
 
     /**
      * @return the Mobile Phone
-     */
+     */    
     public long getMobilePhone() {
 	return mobilePhone;
     }
@@ -32,7 +53,46 @@ public class Contact implements Serializable {
      * @param mobilePhone
      *            the Mobile Phone to set
      */
-    public final void setMobilePhone(long mobilePhone) {
+    public void setMobilePhone(long mobilePhone) {
 	this.mobilePhone = mobilePhone;
-    }    
+    }
+
+    /**
+     * Builder NestedClass for {@link Contact}
+     * 
+     * @author felipe
+     * @since 1.0
+     * @version 1.0
+     * @see Contact
+     * @see Buildable 
+     */
+    public final static class Builder extends Contact implements Buildable<Contact> {
+
+	private static final long serialVersionUID = -6671372786495157443L;
+
+	/**
+	 * Disabled Empty Constructor
+	 */
+	private Builder(){}	
+
+	/**
+	 * @return a new Contact
+	 */
+	@Override
+	public Contact build() {
+	    return new Contact(this);
+	}
+
+	/**
+	 * @param mobilePhone
+	 *            the Mobile Phone to set
+	 * @return Builder
+	 */
+	public Builder withMobilePhone(long mobilePhone) {
+	    this.setMobilePhone(mobilePhone);
+	    return this;
+	}
+
+    }
+
 }

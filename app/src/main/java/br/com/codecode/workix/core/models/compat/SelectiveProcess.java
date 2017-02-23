@@ -9,19 +9,25 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.UUID;
 
+import br.com.codecode.workix.core.interfaces.Persistable;
+import br.com.codecode.workix.core.interfaces.Traceable;
+
+
 /**
- * Selective Process Class for Compatibility
- * <br>Without Annotations
+ * Selective Process JPA with Inherited Fields and Methods
+ * No Anotation for Compatibility Only with Older Versions
  * @author felipe
- * @since 1.1
+ * @since 1.0
  * @version 1.1
  * @see Observable
  * @see Observer
+ * @see Traceable
+ * @see Persistable
  * @see Serializable
  */
-public class SelectiveProcess extends Observable implements Observer, Serializable {
+public class SelectiveProcess extends Observable implements Observer, Traceable, Persistable, Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -5336099006523168288L;
 
     private boolean active;
 
@@ -31,11 +37,15 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 
     private Calendar disabledAt;
 
+    private Calendar expire;
+
     private long id;
 
     private Job job;
 
     private int maxCandidates;
+
+    private Calendar start;
 
     private Calendar updatedAt;
 
@@ -43,12 +53,8 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 
     private int version;
 
-    private Calendar start;
-
-    private Calendar expire;
-
     /**
-     * Public Default Constructor
+     * Public Default Constructor for JPA Compatibility Only
      */
     public SelectiveProcess(){}
 
@@ -78,22 +84,23 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 	return true;
     }
 
-    protected void generateUUID() {
-	this.uuid = UUID.randomUUID().toString();
+    @Override
+    public void generateUUID() {
+	uuid = UUID.randomUUID().toString();
     }
 
     public Set<Candidate> getCandidates() {
 	return this.candidates;
     }
 
-    public Calendar getCreatedAt() {
-	return createdAt;
+    /**
+     * @return the expire
+     */
+    public Calendar getExpire() {
+	return expire;
     }
 
-    public Calendar getDisabledAt() {
-	return disabledAt;
-    }
-
+    @Override
     public long getId() {
 	return this.id;
     }
@@ -106,15 +113,14 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 	return maxCandidates;
     }
 
-    public Calendar getUpdatedAt() {
-	return updatedAt;
+    /**
+     * @return the start
+     */
+    public Calendar getStart() {
+	return start;
     }
 
-    public String getUuid() {
-	return uuid;
-    }
-
-    public int getVersion() {
+    protected int getVersion() {
 	return this.version;
     }
 
@@ -127,16 +133,17 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
     }
 
     /**
-     * Initialize Fields
-     */    
-    protected void init() {
+     * Initialize Fields for CDI Injection
+     */
+    private void init() {
 	this.addObserver(this);
-	this.active = true;
-	this.candidates = new HashSet<>();
+	active = true;
+	candidates = new HashSet<>();
     }
 
-    protected void insertTimeStamp() {
-	this.createdAt = Calendar.getInstance();
+    @Override
+    public void insertTimeStamp() {
+	createdAt = Calendar.getInstance();
     }
 
     public boolean isActive() {
@@ -164,13 +171,20 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 	setChanged();
     }
 
+    /*
+    @Override
+    public void prepareToPersist() {
+	    Traceable.super.prepareToPersist();
+    }
+    */
+
     public boolean registerCandidate(Candidate candidate) {
 
 	boolean b = false;
 
 	if ((isActive()) && (isElegible()) && (!isInProcess(candidate))) {
 
-	    this.candidates.add(candidate);
+	    candidates.add(candidate);
 
 	    System.out.println(candidate.getName() + " Registered with Success");
 
@@ -189,10 +203,10 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 
     }
 
-    protected void setActive(boolean active) {
+    public void setActive(boolean active) {
 
 	if (!active) {
-	    this.disabledAt = Calendar.getInstance();
+	    disabledAt = Calendar.getInstance();
 	}
 
 	this.active = active;
@@ -205,14 +219,15 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 	notifyChanges();
     }
 
-    protected void setCreatedAt(Calendar createdAt) {
-	this.createdAt = createdAt;
+    /**
+     * @param expire
+     *            the expire to set
+     */
+    public void setExpire(Calendar expire) {
+	this.expire = expire;
     }
 
-    protected void setDisabledAt(Calendar disabledAt) {
-	this.disabledAt = disabledAt;
-    }
-
+    @Override
     public void setId(long id) {
 	this.id = id;
     }
@@ -225,23 +240,18 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 	this.maxCandidates = maxCandidates;
     }
 
-    protected void setUpdatedAt(Calendar updatedAt) {
-	this.updatedAt = updatedAt;
-    }
-
-    protected void setUuid(String uuid) {
-	this.uuid = uuid;
+    /**
+     * @param start
+     *            the start to set
+     */
+    public void setStart(Calendar start) {
+	this.start = start;
     }
 
     protected void setVersion(final int version) {
 	this.version = version;
     }
-    
-    protected void updateTimeStamp() {
-	this.updatedAt = Calendar.getInstance();
-    }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void update(Observable observable, Object object) {
 
@@ -263,20 +273,9 @@ public class SelectiveProcess extends Observable implements Observer, Serializab
 	}
     }
 
-
-    public Calendar getExpire() {
-        return expire;
+    @Override
+    public void updateTimeStamp() {
+	updatedAt = Calendar.getInstance();
     }
 
-    public void setExpire(Calendar expire) {
-        this.expire = expire;
-    }
-
-    public Calendar getStart() {
-        return start;
-    }
-
-    public void setStart(Calendar start) {
-        this.start = start;
-    }
 }

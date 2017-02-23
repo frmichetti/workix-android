@@ -4,14 +4,18 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.UUID;
 
+import br.com.codecode.workix.core.interfaces.Persistable;
+import br.com.codecode.workix.core.interfaces.Traceable;
+
+
 /**
- * MyEntity Class for Compatibility
- * <br>Without Annotations<br>
+ * MyEntity JPA with Inherited Fields and Methods <br>
  * Base abstract Class for Share common Fields <br>
  * All inherited classes MUST contain<br>
+ * No Anotation for Compatibility Only with Older Versions
  * <table>
  * <caption> Inherited Fields </caption>
- * <tr>
+ * <tr> 
  * <th>{@link #version}</th>
  * <th>{@link #createdAt}</th>
  * <th>{@link #updatedAt}</th>
@@ -20,34 +24,37 @@ import java.util.UUID;
  * </table>
  * 
  * @author felipe
- * @since 1.1
+ * @since 1.0
  * @version 1.1
+ * @see Traceable
+ * @see Persistable
  * @see Serializable
  */
-abstract class MyEntity implements Serializable {
-
-    private final static long serialVersionUID = 1L;
-
+abstract class MyEntity implements Traceable, Persistable, Serializable {
+   
+    private final static long serialVersionUID = -5791260209364116790L;
+    
+    private int version;    
+    
     private Calendar createdAt, updatedAt;
-
+  
     private String uuid;
 
-    private int version;
-
     /**
-     * Public Default Constructor
+     * Public Default Constructor for JPA Compatibility Only
      */
     public MyEntity(){}
 
-    protected void generateUUID() {
-	this.uuid = UUID.randomUUID().toString();
+    @Override
+    public void generateUUID() {
+	this.setUuid(UUID.randomUUID().toString());
     }
 
-    public Calendar getCreatedAt() {
+    private Calendar getCreatedAt() {
 	return createdAt;
     }
 
-    public Calendar getUpdatedAt() {
+    private Calendar getUpdatedAt() {
 	return updatedAt;
     }
 
@@ -55,32 +62,43 @@ abstract class MyEntity implements Serializable {
 	return uuid;
     }
 
-    public int getVersion() {
+    private int getVersion() {
 	return version;
     }
 
+    @Override
     public void insertTimeStamp() {
-	this.createdAt = Calendar.getInstance();
+	this.setCreatedAt(Calendar.getInstance());
     }
 
-    protected void setCreatedAt(Calendar createdAt) {
+    /*
+
+    @Override
+    public void prepareToPersist() {
+	    Traceable.super.prepareToPersist();
+    }
+
+    */
+
+    private void setCreatedAt(Calendar createdAt) {
 	this.createdAt = createdAt;
     }
 
-    protected void setUpdatedAt(Calendar updatedAt) {
+    private void setUpdatedAt(Calendar updatedAt) {
 	this.updatedAt = updatedAt;
     }
 
-    protected void setUuid(String uuid) {
+    private void setUuid(String uuid) {
 	this.uuid = uuid;
     }
 
-    protected void setVersion(int version) {
+    private void setVersion(int version) {
 	this.version = version;
     }
 
-    protected void updateTimeStamp() {
-	this.updatedAt = Calendar.getInstance();
+    @Override
+    public void updateTimeStamp() {
+	this.setUpdatedAt(Calendar.getInstance());
     }
 
 }
