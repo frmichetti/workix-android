@@ -1,6 +1,6 @@
 /**
  * @author Felipe Rodrigues Michetti
- * @see http://portfolio-frmichetti.rhcloud.com
+
  * @see mailto:frmichetti@gmail.com
  */
 package br.com.codecode.workix.android.tasks;
@@ -18,20 +18,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.Iterator;
 
 import br.com.codecode.workix.android.R;
 import br.com.codecode.workix.core.models.compat.Candidate;

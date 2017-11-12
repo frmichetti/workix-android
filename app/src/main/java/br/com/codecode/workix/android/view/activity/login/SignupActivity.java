@@ -1,6 +1,6 @@
 /**
  * @author Felipe Rodrigues Michetti
- * @see http://portfolio-frmichetti.rhcloud.com
+
  * @see http://www.codecode.com.br
  * @see mailto:frmichetti@gmail.com
  */
@@ -73,10 +73,10 @@ public class SignupActivity extends BaseActivity {
         doCheckConnection();
 
         //TODO REMOVEME
-        editTextEmail.setText("frmichetti@gmail.com");
+        editTextEmail.setText("");
 
         //TODO REMOVEME
-        editTextPassword.setText("123456");
+        editTextPassword.setText("");
     }
 
     @Override

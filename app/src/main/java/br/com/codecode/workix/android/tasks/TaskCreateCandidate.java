@@ -1,6 +1,6 @@
 /**
  * @author Felipe Rodrigues Michetti
- * @see http://portfolio-frmichetti.rhcloud.com
+
  * @see http://www.codecode.com.br
  * @see mailto:frmichetti@gmail.com
  */
@@ -15,13 +15,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 import br.com.codecode.workix.android.R;
