@@ -8,6 +8,7 @@ package br.com.codecode.workix.android.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -68,27 +69,27 @@ public class CandidateActivity extends BaseActivity {
 
         super.doCastComponents();
 
-        editTextName = (EditText) findViewById(R.id.editTextName);
+        editTextName = findViewById(R.id.editTextName);
 
-        txtInputLayoutName = (TextInputLayout) findViewById(R.id.input_layout_name);
+        txtInputLayoutName = findViewById(R.id.input_layout_name);
 
-        editTextCPF = (EditText) findViewById(R.id.editTextCPF);
+        editTextCPF = findViewById(R.id.editTextCPF);
 
-        txtInputLayoutCPF = (TextInputLayout) findViewById(R.id.input_layout_cpf);
+        txtInputLayoutCPF = findViewById(R.id.input_layout_cpf);
 
-        editTextPhone = (EditText) findViewById(R.id.editTextPhone);
+        editTextPhone = findViewById(R.id.editTextPhone);
 
-        txtInputLayoutPhone = (TextInputLayout) findViewById(R.id.input_layout_phone);
+        txtInputLayoutPhone = findViewById(R.id.input_layout_phone);
 
-        editTextMobilePhone = (EditText) findViewById(R.id.editTextMobilePhone);
+        editTextMobilePhone = findViewById(R.id.editTextMobilePhone);
 
-        txtInputLayoutMobilePhone = (TextInputLayout) findViewById(R.id.input_layout_mobilePhone);
+        txtInputLayoutMobilePhone = findViewById(R.id.input_layout_mobilePhone);
 
-        editTextBirthDate = (EditText) findViewById(R.id.editTextBirthDate);
+        editTextBirthDate = findViewById(R.id.editTextBirthDate);
 
-        txtInputBirthDate = (TextInputLayout) findViewById(R.id.input_layout_birthDate);
+        txtInputBirthDate = findViewById(R.id.input_layout_birthDate);
 
-        fabConfirm = (FloatingActionButton) findViewById(R.id.fab_action_done);
+        fabConfirm = findViewById(R.id.fab_action_done);
 
     }
 
@@ -116,7 +117,7 @@ public class CandidateActivity extends BaseActivity {
                     new TaskCreateCandidate(context, new AsyncResponse<Candidate>() {
 
                         @Override
-                        public void processFinish(Candidate output) {
+                        public void processFinish(@NonNull Candidate output) {
 
                             candidate = output;
 

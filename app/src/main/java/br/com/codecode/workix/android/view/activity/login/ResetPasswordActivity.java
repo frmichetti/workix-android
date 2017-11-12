@@ -17,7 +17,6 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,17 +60,17 @@ public class ResetPasswordActivity extends BaseActivity {
     @Override
     public void doCastComponents() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
 
-        editTextEmail = (EditText) findViewById(R.id.email);
+        editTextEmail = findViewById(R.id.email);
 
-        btnReset = (Button) findViewById(R.id.btn_reset_password);
+        btnReset = findViewById(R.id.btn_reset_password);
 
-        btnBack = (Button) findViewById(R.id.btn_back);
+        btnBack = findViewById(R.id.btn_back);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);
 
     }
 
@@ -195,7 +194,7 @@ public class ResetPasswordActivity extends BaseActivity {
 
         View sbView = snackbar.getView();
 
-        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
 
         textView.setTextColor(color);
 

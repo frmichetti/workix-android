@@ -38,8 +38,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import java.io.Serializable;
-
 import br.com.codecode.workix.android.R;
 import br.com.codecode.workix.android.tasks.AsyncResponse;
 import br.com.codecode.workix.android.tasks.TaskLoginFirebase;
@@ -114,32 +112,32 @@ public class LoginActivity extends BaseActivity {
         doCheckConnection(context);
 
         //TODO REMOVEME
-        editTextEmail.setText("frmichetti@gmail.com");
+        editTextEmail.setText("");
 
         //TODO REMOVEME
-        editTextPassword.setText("123456");
+        editTextPassword.setText("");
     }
 
     @Override
     public void doCastComponents() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
 
-        editTextEmail = (EditText) findViewById(R.id.email);
+        editTextEmail = findViewById(R.id.email);
 
-        editTextPassword = (EditText) findViewById(R.id.password);
+        editTextPassword = findViewById(R.id.password);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);
 
-        btnSignup = (Button) findViewById(R.id.btn_signup);
+        btnSignup = findViewById(R.id.btn_signup);
 
-        btnLogin = (Button) findViewById(R.id.btn_login);
+        btnLogin = findViewById(R.id.btn_login);
 
-        btnReset = (Button) findViewById(R.id.btn_reset_password);
+        btnReset = findViewById(R.id.btn_reset_password);
 
-        signInButton = (SignInButton) findViewById(R.id.google_sign_in_button);
+        signInButton = findViewById(R.id.google_sign_in_button);
 
         /*
          Customize sign-in button. The sign-in button can be displayed in
@@ -282,7 +280,7 @@ public class LoginActivity extends BaseActivity {
 
         View sbView = snackbar.getView();
 
-        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
 
         textView.setTextColor(color);
 
@@ -368,14 +366,18 @@ public class LoginActivity extends BaseActivity {
                             new TaskLoginFirebase(context, new AsyncResponse<Candidate>() {
 
                                 @Override
-                                public void processFinish(Candidate output) {
+                                public void processFinish(@NonNull Candidate output) {
 
                                     //FIXME REMOVE ME
-/*
-                                    if(output == null) throw new RuntimeException("Forbidden - Candidate is Null");
+
+                                    if(output == null){
+                                        //throw new RuntimeException("Forbidden - Candidate is Null")
+                                        showToast(context, "Descupe, estamos com nossos servidores desabilitados", Toast.LENGTH_LONG);
+                                        return;
+                                    };
 
                                     if(output != null && output.getUser() == null) throw new RuntimeException("Forbidden - User for Candidate is Null");
-*/
+
                                     if(output.getId() == 0){
 
                                         startActivity(new Intent(context, CandidateActivity.class)
@@ -440,7 +442,7 @@ public class LoginActivity extends BaseActivity {
                             new TaskLoginFirebase(context, new AsyncResponse<Candidate>() {
 
                                 @Override
-                                public void processFinish(Candidate output) {
+                                public void processFinish(@NonNull Candidate output) {
 
                                     //TODO Validate Logic HERE
 

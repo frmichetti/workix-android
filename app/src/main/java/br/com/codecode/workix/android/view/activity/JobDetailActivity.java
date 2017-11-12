@@ -64,17 +64,17 @@ public class JobDetailActivity extends BaseActivity {
 
         super.doCastComponents();
 
-        textViewTitle = (TextView) findViewById(R.id.textViewTitle);
+        textViewTitle = findViewById(R.id.textViewTitle);
 
-        textViewDescription = (TextView) findViewById(R.id.textViewDescriptionVar);
+        textViewDescription = findViewById(R.id.textViewDescriptionVar);
 
-        textViewEmployeer = (TextView) findViewById(R.id.textViewEmployeerVar);
+        textViewEmployeer = findViewById(R.id.textViewEmployeerVar);
 
-        textViewRequirement = (TextView) findViewById(R.id.textViewRequirementVar);
+        textViewRequirement = findViewById(R.id.textViewRequirementVar);
 
-        textViewMinPayment = (TextView) findViewById(R.id.textViewMinPaymentVar);
+        textViewMinPayment = findViewById(R.id.textViewMinPaymentVar);
 
-        floatButtonAddCart = (FloatingActionButton) findViewById(R.id.fab_add_to_cart);
+        floatButtonAddCart = findViewById(R.id.fab_add_to_cart);
 
 
     }

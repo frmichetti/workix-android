@@ -10,7 +10,7 @@ package br.com.codecode.workix.core.models.compat;
 import java.util.Calendar;
 
 /**
- * Token Model
+ * Token Model for Compatibily with Older Versions
  * 
  * @author felipe
  * @since 1.0
@@ -26,9 +26,9 @@ public final class Token {
      * Public Default Constructor
      */
     private Token(){}
-
+    
     private Token(Builder builder) {
-	this.createdAt = builder.createdAt;
+	setCreatedAt(builder.createdAt);
 	this.key = builder.key;
     }
 
@@ -49,7 +49,7 @@ public final class Token {
 	return key;
     }
 
-    protected void setCreatedAt(Calendar createdAt) {
+    private void setCreatedAt(Calendar createdAt) {
 	this.createdAt = createdAt;
     }
 
@@ -59,12 +59,11 @@ public final class Token {
 
     @Override
     public String toString() {
-	return new StringBuilder()
-		.append("Token [createdAt=")
-		.append(createdAt)
-		.append(", key=")
-		.append(key)
-		.append("]").toString();
+	return "Token [createdAt=" +
+            createdAt +
+            ", key=" +
+            key +
+            "]";
     }
 
     /**
@@ -83,8 +82,8 @@ public final class Token {
 	}
 
 	public Builder withKey(String key) {
+	    this.key = key;
 	    this.createdAt = Calendar.getInstance();
-	    this.key = key;	    
 	    return this;
 	}
     }

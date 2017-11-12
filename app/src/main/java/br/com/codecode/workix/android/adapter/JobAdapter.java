@@ -69,7 +69,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.MyViewHolder> {
 
             super(view);
 
-            title = (TextView) view.findViewById(R.id.title);
+            title = view.findViewById(R.id.title);
 
            // minPayment = (TextView) view.findViewById(R.id.minPayment);
 

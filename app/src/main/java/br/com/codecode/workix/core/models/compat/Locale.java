@@ -2,7 +2,6 @@ package br.com.codecode.workix.core.models.compat;
 
 import java.io.Serializable;
 
-
 import br.com.codecode.workix.core.enums.Estate;
 import br.com.codecode.workix.core.interfaces.Buildable;
 
@@ -110,11 +109,9 @@ public class Locale implements Serializable {
 
     @Override
     public String toString() {	
-	return new StringBuilder()
-		.append(city)
-		.append(", ")
-		.append(estate)
-		.toString();
+	return city +
+            ", " +
+            estate;
     }
 
     /**

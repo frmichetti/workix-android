@@ -7,6 +7,7 @@
 package br.com.codecode.workix.android.view.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -89,9 +90,9 @@ public class JobsFragment extends BaseFragment {
     @Override
     protected void doCastComponents(View rootView) {
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerViewJobs);
+        recyclerView = rootView.findViewById(R.id.recyclerViewJobs);
 
-        mySwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshJobs);
+        mySwipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshJobs);
 
 
     }
@@ -133,7 +134,7 @@ public class JobsFragment extends BaseFragment {
         new TaskDownloadJobs(context, new AsyncResponse<ArrayList<Job>>() {
 
             @Override
-            public void processFinish(ArrayList<Job> output) {
+            public void processFinish(@NonNull ArrayList<Job> output) {
 
                 jobs = output;
 

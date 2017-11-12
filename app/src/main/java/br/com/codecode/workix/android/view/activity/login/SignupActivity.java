@@ -32,14 +32,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import java.io.Serializable;
-
 import br.com.codecode.workix.android.R;
 import br.com.codecode.workix.android.tasks.AsyncResponse;
 import br.com.codecode.workix.android.tasks.TaskCreateUser;
 import br.com.codecode.workix.android.util.ConnectivityReceiver;
 import br.com.codecode.workix.android.view.activity.CandidateActivity;
-import br.com.codecode.workix.core.models.compat.Candidate;
 import br.com.codecode.workix.core.models.compat.User;
 
 
@@ -94,21 +91,21 @@ public class SignupActivity extends BaseActivity {
     @Override
     public void doCastComponents() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_dark);
+        Toolbar toolbar = findViewById(R.id.toolbar_dark);
 
         setSupportActionBar(toolbar);
 
-        btnSignIn = (Button) findViewById(R.id.google_sign_in_button);
+        btnSignIn = findViewById(R.id.google_sign_in_button);
 
-        btnSignUp = (Button) findViewById(R.id.sign_up_button);
+        btnSignUp = findViewById(R.id.sign_up_button);
 
-        editTextEmail = (EditText) findViewById(R.id.email);
+        editTextEmail = findViewById(R.id.email);
 
-        editTextPassword = (EditText) findViewById(R.id.password);
+        editTextPassword = findViewById(R.id.password);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);
 
-        btnResetPassword = (Button) findViewById(R.id.btn_reset_password);
+        btnResetPassword = findViewById(R.id.btn_reset_password);
     }
 
     @Override
@@ -205,7 +202,7 @@ public class SignupActivity extends BaseActivity {
                                         new TaskCreateUser(context, new AsyncResponse<User>() {
 
                                             @Override
-                                            public void processFinish(User output) {
+                                            public void processFinish(@NonNull User output) {
 
                                                 if(output == null) throw new RuntimeException("Forbidden - User is Null");
 
@@ -321,7 +318,7 @@ public class SignupActivity extends BaseActivity {
 
         View sbView = snackbar.getView();
 
-        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
 
         textView.setTextColor(color);
 

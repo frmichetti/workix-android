@@ -13,8 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import java.io.Serializable;
-
 import br.com.codecode.workix.core.models.compat.Candidate;
 import br.com.codecode.workix.core.models.compat.Job;
 
@@ -71,8 +69,8 @@ public abstract class BaseFragment extends Fragment {
     public void doChangeActivity(Context context, Class clazz) {
 
         startActivity(new Intent(context, clazz)
-                .putExtra("candidate", (Serializable) candidate)
-                .putExtra("job", (Serializable) selectedJob));
+                .putExtra("candidate", candidate)
+                .putExtra("job", selectedJob));
 
     }
 

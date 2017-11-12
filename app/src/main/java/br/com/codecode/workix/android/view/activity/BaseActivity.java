@@ -6,7 +6,6 @@
  */
 package br.com.codecode.workix.android.view.activity;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -19,7 +18,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -31,8 +29,6 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.io.Serializable;
 
 import br.com.codecode.workix.android.R;
 import br.com.codecode.workix.android.util.ConnectivityReceiver;
@@ -251,7 +247,7 @@ public abstract class BaseActivity extends AppCompatActivity implements MyPatter
     @Override
     public void doCastComponents() {
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
 
         Log.d("[DO-CAST-COMP]", "Super Do Cast Components");
 
@@ -315,9 +311,9 @@ public abstract class BaseActivity extends AppCompatActivity implements MyPatter
 
         Bundle bundle = new Bundle();
 
-        bundle.putSerializable("candidate", (Serializable) candidate);
+        bundle.putSerializable("candidate", candidate);
 
-        bundle.putSerializable("job", (Serializable) selectedJob);
+        bundle.putSerializable("job", selectedJob);
 
         bundle.putInt("fragmentId", fragmentId);
 
@@ -369,7 +365,7 @@ public abstract class BaseActivity extends AppCompatActivity implements MyPatter
 
         View sbView = snackbar.getView();
 
-        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
 
         textView.setTextColor(color);
 
@@ -411,8 +407,8 @@ public abstract class BaseActivity extends AppCompatActivity implements MyPatter
     public void doChangeActivity(Context context, Class clazz) {
 
         startActivity(new Intent(context, clazz)
-                .putExtra("candidate", (Serializable) candidate)
-                .putExtra("job", (Serializable) selectedJob));
+                .putExtra("candidate", candidate)
+                .putExtra("job", selectedJob));
 
     }
 
